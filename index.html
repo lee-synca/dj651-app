@@ -813,8 +813,10 @@ function render(){
   $('app').classList.toggle('full', S.signedIn && S.full);
   updateProgress();
   if (!S.signedIn) setTimeout(runSplash, 30);
+  syncAudio();
 }
 function updateProgress(){
+  updatePosition();
   if (!S.signedIn) return;
   const d = dur(), el = d * S.progress / 100, seek = $('seek');
   if (seek) { if (document.activeElement !== seek) seek.value = Math.round(S.progress*10); seek.style.setProperty('--p', S.progress + '%'); }
@@ -826,6 +828,7 @@ function updateProgress(){
   if ($('msub') && ti >= 0) $('msub').textContent = `${S.preview ? 'Preview · ' : ''}${tr[ti].t} · ${tr[ti].a}`;
   if (ti !== S.curTrack) {
     S.curTrack = ti;
+    updateMeta();
     document.querySelectorAll('#tl li').forEach(li => { const i = +li.dataset.i; li.classList.toggle('cur', i === ti); li.classList.toggle('done', i < ti); });
     const t = topPage();
     if (t && t.type === 'mix' && t.id === S.now) document.querySelectorAll('#overlay .trk').forEach(el => el.classList.toggle('cur', +el.dataset.i === ti));
@@ -969,6 +972,65 @@ addEventListener('appinstalled', () => { installEvt = null; markInstalled(); clo
 
 function queueSheet(){
   openSheet(`<h2>Up next</h2>${upNext().map(x => `<div class="row" data-act="play" data-id="${x.id}"><img src="${cover(x.id)}" alt=""><div style="min-width:0"><div class="rt">${x.t}</div><div class="rs">DJ 651 ${canPlay(x.id) ? '' : '<span class="badge pv">Preview</span>'}</div></div><span></span></div>`).join('')}`);
+}
+
+/* ---------- lock screen / Now Playing ----------
+   Phones only show lock-screen controls while real audio is playing. The demo has no MP3s yet, so a silent
+   audio track plays alongside the pretend playback, and the Media Session API hands the phone the mix title,
+   current song, cover and the play / pause / skip / seek buttons. With real MP3s the audio element simply
+   plays the mix itself. */
+const audio = new Audio();
+audio.loop = true; audio.preload = 'auto'; audio.setAttribute('playsinline', '');
+audio.src = (() => {
+  const rate = 8000, n = rate * 10, buf = new ArrayBuffer(44 + n), v = new DataView(buf);
+  const w = (o, t) => [...t].forEach((c, i) => v.setUint8(o + i, c.charCodeAt(0)));
+  w(0, 'RIFF'); v.setUint32(4, 36 + n, true); w(8, 'WAVE'); w(12, 'fmt ');
+  v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+  v.setUint32(24, rate, true); v.setUint32(28, rate, true); v.setUint16(32, 1, true); v.setUint16(34, 8, true);
+  w(36, 'data'); v.setUint32(40, n, true); new Uint8Array(buf, 44).fill(128);
+  return URL.createObjectURL(new Blob([buf], {type: 'audio/wav'}));
+})();
+const MS = 'mediaSession' in navigator ? navigator.mediaSession : null;
+const artUrls = {};
+let audioSync = false, metaKey = '', posAt = 0;
+function artFor(id){
+  if (!artUrls[id] && cover(id)) { artUrls[id] = cover(id); fetch(cover(id)).then(r => r.blob()).then(b => { artUrls[id] = URL.createObjectURL(b); metaKey = ''; updateMeta(); }).catch(() => {}); }
+  return artUrls[id];
+}
+function updateMeta(){
+  if (!MS || !S.signedIn || !S.now || typeof MediaMetadata === 'undefined') return;
+  const m = byId[S.now], tr = tracks(S.now), ti = S.curTrack >= 0 ? S.curTrack : -1, t = ti >= 0 ? tr[ti] : null;
+  const title = t ? t.t : m.t, artist = t ? `${t.a} · DJ 651` : 'DJ 651', art = artFor(m.id);
+  const key = [title, artist, m.t, art, S.preview].join('|');
+  if (key === metaKey) return; metaKey = key;
+  MS.metadata = new MediaMetadata({title: S.preview ? `${title} (preview)` : title, artist, album: m.t,
+    artwork: art ? [{src: art, sizes: '300x300', type: 'image/jpeg'}] : []});
+}
+function updatePosition(force){
+  if (!MS || !MS.setPositionState || !S.signedIn || !S.now) return;
+  const now = Date.now(); if (!force && now - posAt < 2000) return; posAt = now;
+  const d = dur(), rate = (S.preview ? 0.25 : 0.0375) * d;   // the demo plays fast: this keeps the lock-screen bar in step
+  try { MS.setPositionState({duration: d, position: Math.min(d, d * S.progress / 100), playbackRate: Math.max(0.1, rate)}); } catch (e) {}
+}
+function syncAudio(){
+  const want = S.signedIn && S.playing;
+  audioSync = true;
+  if (want && audio.paused) audio.play().catch(() => {});
+  if (!want && !audio.paused) audio.pause();
+  audioSync = false;
+  if (MS) MS.playbackState = want ? 'playing' : (S.signedIn && S.now ? 'paused' : 'none');
+  updateMeta(); updatePosition(true);
+}
+/* iPhone can pause the audio itself (a call, another app, the lock-screen button): follow it */
+audio.addEventListener('pause', () => { if (!audioSync && S.playing) { S.playing = false; render(); } });
+audio.addEventListener('play', () => { if (!audioSync && !S.playing && S.signedIn) { S.playing = true; render(); } });
+if (MS) {
+  const h = (a, f) => { try { MS.setActionHandler(a, f); } catch (e) {} };
+  h('play', () => { if (!S.playing) { if (S.progress >= 100) play(S.now); else { S.playing = true; if (!timer) timer = setInterval(tick, 120); render(); } } });
+  h('pause', () => { if (S.playing) { S.playing = false; render(); } });
+  h('nexttrack', () => skip(1));
+  h('previoustrack', () => { if (S.progress > 8) { S.progress = 0; updateProgress(); updatePosition(true); } else skip(-1); });
+  h('seekto', d => { if (S.preview) return; S.progress = Math.max(0, Math.min(99.9, d.seekTime / dur() * 100)); S.curTrack = -2; updateProgress(); updatePosition(true); });
 }
 
 /* ---------- playback ---------- */
