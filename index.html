@@ -34,7 +34,8 @@ html,body{margin:0}
 }
 *{box-sizing:border-box}
 html,body{height:100%}
-body{margin:0;background:#08070a;color:var(--fg);font-family:var(--font);font-size:14px;line-height:1.35;overflow:hidden;-webkit-tap-highlight-color:transparent;-webkit-font-smoothing:antialiased}
+html,body{background:#0a090c}
+body{margin:0;color:var(--fg);font-family:var(--font);font-size:14px;line-height:1.35;overflow:hidden;-webkit-tap-highlight-color:transparent;-webkit-font-smoothing:antialiased}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;padding:0;text-align:left}
 button:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .ic{width:24px;height:24px;flex:none;display:block}
@@ -1049,7 +1050,13 @@ function fitPhone(){
     app.style.setProperty('--h', (innerHeight / z) + 'px');
   } else {
     app.classList.remove('fit');
-    app.style.zoom = ''; app.style.width = ''; app.style.height = '';
+    app.style.zoom = ''; app.style.width = '';
+    /* Home-screen app on iPhone: with the see-through status bar, iOS makes the page shorter than the
+       screen by the status bar's height, leaving a black band at the bottom. Size the app to the full screen. */
+    const standalone = navigator.standalone || matchMedia('(display-mode: standalone)').matches;
+    const full = innerWidth < innerHeight ? Math.max(screen.width, screen.height) : Math.min(screen.width, screen.height);
+    if (standalone && full > innerHeight) { app.style.height = full + 'px'; app.style.bottom = 'auto'; }
+    else { app.style.height = ''; app.style.bottom = ''; }
     app.style.setProperty('--h', app.clientHeight + 'px');
   }
 }
