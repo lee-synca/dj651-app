@@ -295,15 +295,36 @@ button:active{opacity:.7}
 .why{color:var(--gold)}
 
 /* ---------- sign in ---------- */
-.signin{min-height:100%;display:flex;flex-direction:column;justify-content:center;gap:16px;padding-top:28px;padding-bottom:28px}
-.signin .logo{font-family:var(--brand);font-size:46px;line-height:.95}
-.signin .logo i{font-style:normal;color:var(--gold)}
+/* Splash: three slot-machine reels land on 6, then 5, then 1; the form rises in underneath. */
+.signin{position:relative;min-height:100%;display:flex;flex-direction:column;padding-bottom:28px;overflow:hidden;cursor:default}
+.sp-bg{position:absolute;inset:-25% -40%;display:grid;grid-template-columns:repeat(5,1fr);gap:10px;transform:rotate(-14deg);opacity:0;transition:opacity 1.4s ease;pointer-events:none;animation:drift 60s linear infinite alternate}
+.sp-bg img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:6px;display:block}
+.signin.done .sp-bg{opacity:.13}
+@keyframes drift{to{transform:rotate(-14deg) translateY(-14%)}}
+.sp-glow{position:absolute;left:50%;top:30%;width:120%;aspect-ratio:1;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(245,197,66,.16),rgba(245,197,66,0) 60%);opacity:0;transition:opacity .8s;pointer-events:none}
+.signin.pop .sp-glow,.signin.done .sp-glow{opacity:1}
+.sp-num{position:relative;display:flex;justify-content:center;font-family:var(--brand);font-size:min(36vw,170px);line-height:1;color:var(--gold);margin-top:auto}
+.reel{display:block;height:1em;overflow:hidden;opacity:0;transition:opacity .15s,text-shadow .4s}
+.reel.on{opacity:1}
+.reel.set{text-shadow:0 0 34px rgba(245,197,66,.5)}
+.strip{display:flex;flex-direction:column;transition:transform .7s cubic-bezier(.18,1.35,.4,1)}
+.strip span{display:block;height:1em;text-align:center}
+.reel.spin .strip{animation:reel .28s linear infinite;filter:blur(2px)}
+@keyframes reel{from{transform:translateY(0)}to{transform:translateY(-10em)}}
+.signin.pop .sp-num{animation:pop .55s cubic-bezier(.2,1.6,.4,1)}
+@keyframes pop{40%{transform:scale(1.09)}}
+.sp-word{position:relative;text-align:center;font-family:var(--brand);font-size:19px;letter-spacing:.34em;padding-left:.34em;margin-top:10px;opacity:0;transform:translateY(8px);transition:opacity .5s,transform .5s}
+.sp-word i{font-style:normal;color:var(--gold)}
+.sp-form{position:relative;display:flex;flex-direction:column;gap:16px;margin-top:34px;margin-bottom:auto;opacity:0;transform:translateY(26px);transition:opacity .6s .2s,transform .7s .2s cubic-bezier(.2,.8,.2,1);pointer-events:none}
+.signin.done .sp-word{opacity:1;transform:none}
+.signin.done .sp-form{opacity:1;transform:none;pointer-events:auto}
+.sp-skip{position:absolute;left:0;right:0;bottom:calc(14px + env(safe-area-inset-bottom,0px));text-align:center;font-size:12px;color:var(--dim);transition:opacity .4s}
+.signin.done .sp-skip{opacity:0}
+@media (prefers-reduced-motion:reduce){.reel.spin .strip,.sp-bg,.signin.pop .sp-num{animation:none}.strip,.sp-form,.sp-word{transition:none}}
 .field{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:700}
 .field input{font:inherit;font-size:16px;color:var(--fg);background:var(--elev2);border:1px solid var(--line);border-radius:6px;padding:13px 14px}
 .consent{display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--muted);cursor:pointer}
 .consent input{width:20px;height:20px;accent-color:var(--gold);margin-top:1px;flex:none}
-.strip{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
-.strip img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:6px;display:block}
 
 /* ---------- sheet + notifications ---------- */
 #sheet{position:absolute;inset:0;z-index:30;background:rgba(0,0,0,.6);display:flex;align-items:flex-end}
@@ -461,15 +482,52 @@ const avatarBtn = () => `<button class="avatar" data-act="tab" data-tab="plans" 
 
 /* ---------- sign in ---------- */
 function signin(){
-  return `<div class="signin g">
-    <div class="strip">${['hello2','90s5','685v2','moon4'].map(id => `<img src="${cover(id)}" alt="">`).join('')}</div>
-    <div class="logo">SIX<i>.</i>5<i>.</i>ONE</div>
+  const digits = Array.from({length:30}, (_, i) => `<span>${i % 10}</span>`).join('');
+  const bg = ['hello2','swag1','685v2','moon1','pac','froton','party1','summer2','90s1','685music1','risen1','sun1','pills','vibe1','685v1','tautua','fix','gangster1','hello1','swag1','pac','685v2','moon1','hello2','froton'].map(id => `<img src="${cover(id)}" alt="" loading="lazy">`).join('');
+  return `<div class="signin g ${splashDone ? 'done' : ''}" id="signin">
+    <div class="sp-bg" aria-hidden="true">${bg}</div><div class="sp-glow" aria-hidden="true"></div>
+    <div class="sp-num" role="img" aria-label="651">${[6,5,1].map(d => `<span class="reel ${splashDone ? 'on set' : ''}" data-d="${d}" aria-hidden="true"><span class="strip" ${splashDone ? `style="transform:translateY(-${20 + d}em)"` : ''}>${digits}</span></span>`).join('')}</div>
+    <div class="sp-word">SIX<i>.</i>5<i>.</i>ONE</div>
+    <div class="sp-form">
     <p style="margin:0;color:var(--muted);font-size:15px">Every DJ 651 mix in one player. Buy the ones you love, or stream the whole shelf.</p>
     <label class="field" for="email">Email<input id="email" type="email" value="fan@example.com" autocomplete="off"></label>
     <label class="consent" for="smsopt"><input id="smsopt" type="checkbox" ${S.sms?'checked':''}> <span>Text me offers and new mix alerts. Reply STOP any time.</span></label>
     <button class="btn gold wide" data-act="signin">Send me a sign-in link</button>
     <p style="margin:0;color:var(--dim);font-size:12.5px">Demo: this signs you straight in. Nothing is charged and no real texts are sent.</p>
+    </div>
+    <div class="sp-skip">Tap to skip</div>
   </div>`;
+}
+
+let splashDone = false, splashT = [];
+function runSplash(){
+  const root = $('signin');
+  if (!root || splashDone || root.dataset.run) return;
+  root.dataset.run = '1';
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) { finishSplash(); return; }
+  const reels = [...root.querySelectorAll('.reel')], at = (ms, fn) => splashT.push(setTimeout(fn, ms));
+  let t = 250;
+  reels.forEach((r, i) => {
+    at(t, () => r.classList.add('on', 'spin'));
+    t += i === 0 ? 1100 : 800;   // fast count
+    at(t, () => land(r));
+    t += i === 2 ? 500 : 1100;   // pause on the number
+  });
+  at(t, () => root.classList.add('pop'));
+  at(t + 550, finishSplash);
+}
+function land(r){
+  const s = r.firstElementChild, y = new DOMMatrix(getComputedStyle(s).transform).m42;
+  r.classList.remove('spin');
+  s.style.transition = 'none'; s.style.transform = `translateY(${y}px)`; s.offsetHeight;
+  s.style.transition = ''; s.style.transform = `translateY(-${20 + +r.dataset.d}em)`;
+  r.classList.add('set');
+}
+function finishSplash(){
+  splashT.forEach(clearTimeout); splashT = []; splashDone = true;
+  const root = $('signin'); if (!root) return;
+  root.querySelectorAll('.reel').forEach(r => { if (!r.classList.contains('set')) land(r); r.classList.add('on'); });
+  root.classList.add('done');
 }
 
 /* ---------- home ---------- */
@@ -715,6 +773,7 @@ function render(){
   $('app').classList.toggle('playing', S.playing);
   $('app').classList.toggle('full', S.signedIn && S.full);
   updateProgress();
+  if (!S.signedIn) setTimeout(runSplash, 30);
 }
 function updateProgress(){
   if (!S.signedIn) return;
@@ -888,12 +947,13 @@ document.addEventListener('change', e => {
 document.addEventListener('click', e => {
   if (swiped) { swiped = false; e.preventDefault(); return; }
   if (e.target.id === 'sheet') { closeSheet(); return; }
+  if (!splashDone && e.target.closest('#signin')) { finishSplash(); return; }
   const b = e.target.closest('[data-act]'); if (!b || b.disabled) return;
   const a = b.dataset.act, id = b.dataset.id;
   switch (a){
     case 'noop': return;
     case 'signin': S.signedIn = true; S.full = false; S.tab = 'home'; break;
-    case 'signout': S.signedIn = false; S.playing = false; S.stack = []; S.full = false; closeSheet(); break;
+    case 'signout': splashDone = false; S.signedIn = false; S.playing = false; S.stack = []; S.full = false; closeSheet(); break;
     case 'tab': S.tab = b.dataset.tab; S.stack = []; closeSheet(); render(); $('screen').scrollTop = 0; return;
     case 'hfilter': S.homeFilter = b.dataset.f; break;
     case 'lfilter': S.libFilter = b.dataset.f; break;
@@ -984,7 +1044,7 @@ document.addEventListener('click', e => {
       if (similar.length) notify('Six.5.One', 'New from DJ 651', `Mr & Mrs Slick just dropped. You played ${byId[similar[0]].t}, so this one’s for you.`, 300);
       else notify('Mail · DJ 651', 'This week on the shelf', 'Mr & Mrs Slick: 64 minutes of R&B slow jams.', 300);
       S.tab = 'home'; S.homeFilter = 'all'; S.stack = []; render(); $('screen').scrollTop = 0; return; }
-    case 'reset': clearInterval(timer); timer = null; playNext = null; closeSheet(); S = fresh(); break;
+    case 'reset': splashDone = false; clearInterval(timer); timer = null; playNext = null; closeSheet(); S = fresh(); break;
   }
   render();
 });
