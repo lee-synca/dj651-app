@@ -614,12 +614,6 @@ function fullPlayer(){
     <div class="fp-low"><button class="dev ${S.device!=='phone'?'on':''}" data-act="devices">${ic('devices')}${S.device!=='phone' ? dev.name : ''}</button>
       <div class="r"><button data-act="share" aria-label="Share">${ic('share')}</button><button data-act="queue" aria-label="Queue">${ic('queue')}</button></div></div>
     ${S.preview ? `<div class="pvnote"><b>30-second preview.</b> Buy this mix for $${PRICE}, or stream every mix for $29 a month.</div>` : ''}
-    <div class="qlist">
-      ${tr.length ? `<h3>Next from: ${m.t} <small>${tr.length} songs</small></h3>
-        <ol class="tl" id="tl">${tr.map((x,i) => `<li data-i="${i}" data-act="seekto"><span class="i tab">${i+1}</span><span class="ti"><b>${x.t}</b><small>${x.a}</small></span><span class="tm tab">${mmss(toSecs(m.len)*i/tr.length)}</span></li>`).join('')}</ol>`
-        : `<h3>Up next</h3><p style="margin:0 0 6px;color:rgba(255,255,255,.7);font-size:13.5px">DJ 651 hasn’t added the song list for this mix yet.</p>
-          ${upNext().map(x => `<div class="row" data-act="play" data-id="${x.id}"><img src="${cover(x.id)}" alt=""><div style="min-width:0"><div class="rt">${x.t}</div><div class="rs">DJ 651 ${canPlay(x.id) ? '' : '<span class="badge pv">Preview</span>'}</div></div><span></span></div>`).join('')}`}
-    </div>
     ${cta}
   </div>`;
 }
