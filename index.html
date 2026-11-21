@@ -30,7 +30,7 @@ html,body{margin:0}
   --gold:#f5c542; --gold-ink:#1d1504; --hib:#ff5d6c; --sea:#43c9b4;
   --font:'Figtree',system-ui,-apple-system,'Segoe UI',sans-serif;
   --brand:'Archivo Black','Arial Black',Impact,sans-serif;
-  --navh:53px; --nb:max(2px,calc(env(safe-area-inset-bottom,0px) - 26px));
+  --gut:16px; --navh:53px; --nb:max(2px,calc(env(safe-area-inset-bottom,0px) - 26px));
   color-scheme:dark;
 }
 *{box-sizing:border-box}
@@ -55,7 +55,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-o
 #screen{z-index:1}
 #overlay{z-index:3;background:var(--bg)}
 #overlay:empty{display:none}
-.g{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.g{padding-left:max(var(--gut),env(safe-area-inset-left,0px));padding-right:max(var(--gut),env(safe-area-inset-right,0px))}
 .endpad{height:170px}
 
 /* ---------- tab bar + mini player ---------- */
@@ -92,7 +92,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-o
 .sec{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin:26px 0 12px}
 .sec h2{margin:0;font-size:22px;font-weight:800;letter-spacing:-.01em}
 .sec button{font-size:13px;font-weight:700;color:var(--muted)}
-.shelf{display:flex;gap:14px;overflow-x:auto;scrollbar-width:none;margin:0 calc(-1 * max(16px,env(safe-area-inset-left,0px)));padding:0 max(16px,env(safe-area-inset-left,0px))}
+.shelf{display:flex;gap:14px;overflow-x:auto;scrollbar-width:none;margin:0 calc(-1 * max(var(--gut),env(safe-area-inset-left,0px)));padding:0 max(var(--gut),env(safe-area-inset-left,0px))}
 .shelf::-webkit-scrollbar{display:none}
 .tile{flex:0 0 148px;display:flex;flex-direction:column;gap:8px;min-width:0}
 .tile img{width:148px;height:148px;border-radius:6px;object-fit:cover;display:block;background:var(--elev)}
@@ -120,7 +120,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-o
 .banner span{color:var(--muted);font-size:13px}
 
 /* Spotify-style sticky headers, tap feedback, snackbar */
-.stick{position:sticky;top:env(safe-area-inset-top,0px);z-index:4;background:var(--bg);margin-left:calc(-1 * max(16px,env(safe-area-inset-left,0px)));margin-right:calc(-1 * max(16px,env(safe-area-inset-right,0px)));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.stick{position:sticky;top:env(safe-area-inset-top,0px);z-index:4;background:var(--bg);margin-left:calc(-1 * max(var(--gut),env(safe-area-inset-left,0px)));margin-right:calc(-1 * max(var(--gut),env(safe-area-inset-right,0px)));padding-left:max(var(--gut),env(safe-area-inset-left,0px));padding-right:max(var(--gut),env(safe-area-inset-right,0px))}
 .tile,.row,.qt,.cat,.trk,.ct,.feature,.topres,.mini{transition:transform .12s ease,opacity .12s ease}
 .tile:active,.row:active,.qt:active,.cat:active,.trk:active,.ct:active,.feature:active,.topres:active{transform:scale(.97);opacity:.75}
 button:active{opacity:.7}
@@ -136,6 +136,10 @@ button:active{opacity:.7}
 @media (prefers-reduced-motion:reduce){.trk.cur .tn::before,.snack{animation:none}}
 
 .cv{position:relative;display:block;flex:none;line-height:0}
+.tplay,.qplay,.tno,.tst,.thead,.mp-kind,.d-only{display:none}
+.mp-hero{position:relative}
+.mp-hero .mp-cover{width:70%}
+.cat-t{font-size:32px;margin-top:2px}
 .own-tick{position:absolute;right:6px;bottom:6px;width:24px;height:24px;border-radius:50%;background:var(--gold);color:var(--gold-ink);display:grid;place-items:center;box-shadow:0 2px 8px rgba(0,0,0,.55)}
 .own-tick .ic{width:15px;height:15px}
 .row .own-tick,.qt .own-tick{width:17px;height:17px;right:3px;bottom:3px}
@@ -186,7 +190,7 @@ button:active{opacity:.7}
 .mp-head .hbg{position:absolute;inset:0;background:var(--pd);opacity:var(--o,0)}
 .mp-head > button,.mp-head .htitle{position:relative}
 .mp-head .htitle{text-align:center;font-weight:700;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:var(--o,0)}
-.mp-head .pin{position:absolute;right:max(16px,env(safe-area-inset-right,0px));top:calc(30px + env(safe-area-inset-top,0px));width:52px;height:52px;border-radius:50%;background:var(--gold);color:var(--gold-ink);display:grid;place-items:center;box-shadow:0 8px 20px rgba(0,0,0,.45);opacity:0;pointer-events:none;transform:scale(.85);transition:opacity .15s,transform .15s}
+.mp-head .pin{position:absolute;right:max(var(--gut),env(safe-area-inset-right,0px));top:calc(30px + env(safe-area-inset-top,0px));width:52px;height:52px;border-radius:50%;background:var(--gold);color:var(--gold-ink);display:grid;place-items:center;box-shadow:0 8px 20px rgba(0,0,0,.45);opacity:0;pointer-events:none;transform:scale(.85);transition:opacity .15s,transform .15s}
 .mp-head .pin .ic{width:24px;height:24px}
 .mp-head.pinned .pin{opacity:1;pointer-events:auto;transform:none}
 .mp-cover{position:relative;display:block;width:64%;max-width:280px;aspect-ratio:1;object-fit:cover;margin:4px auto 0;box-shadow:0 14px 40px rgba(0,0,0,.55)}
@@ -348,7 +352,7 @@ a.btn{text-decoration:none}
 /* ---------- sheet + notifications ---------- */
 #sheet{position:absolute;inset:0;z-index:30;background:rgba(0,0,0,.6);display:flex;align-items:flex-end}
 #sheet[hidden]{display:none}
-.sheet{width:100%;max-height:85%;overflow-y:auto;background:#24212a;border-radius:14px 14px 0 0;padding:10px max(16px,env(safe-area-inset-right,0px)) calc(18px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:12px;animation:up .24s ease-out}
+.sheet{width:100%;max-height:85%;overflow-y:auto;background:#24212a;border-radius:14px 14px 0 0;padding:10px max(var(--gut),env(safe-area-inset-right,0px)) calc(18px + env(safe-area-inset-bottom,0px)) max(var(--gut),env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:12px;animation:up .24s ease-out}
 .sheet .grab{width:36px;height:4px;border-radius:2px;background:rgba(255,255,255,.3);margin:0 auto 4px}
 .sheet h2{margin:0;font-size:20px;font-weight:800}
 .sheet p{margin:0;color:var(--muted);font-size:14px}
@@ -366,11 +370,229 @@ a.btn{text-decoration:none}
 @keyframes up{from{transform:translateY(40px);opacity:.3}}
 @keyframes down{from{transform:translateY(-14px);opacity:.3}}
 @media (prefers-reduced-motion:reduce){.sheet,.notice{animation:none}}
+
+/* ================= DESKTOP: Spotify desktop layout =================
+   Library sidebar on the left, main panel in the middle, Now Playing panel on the right,
+   a search top bar and a full-width player bar. Kicks in at 1024px wide once signed in. */
+#topbar,#side,#rpanel,#pbar,#ctx{display:none}
+@media (min-width:1024px){
+  .app{max-width:none;border:0}
+  .signin > :not(.sp-bg):not(.sp-glow):not(.sp-skip){width:100%;max-width:440px;margin-left:auto;margin-right:auto}
+}
+.app.desk{--gut:24px;--lw:300px;--rw:340px;display:grid;grid-template-areas:"top top top" "side main right" "bar bar bar";grid-template-columns:var(--lw) minmax(0,1fr) var(--rw);grid-template-rows:64px minmax(0,1fr) 80px;column-gap:8px;padding:0 8px;background:#000}
+@media (max-width:1279px){.app.desk{--lw:260px;--rw:290px}}
+.app.desk.norp{grid-template-areas:"top top" "side main" "bar bar";grid-template-columns:var(--lw) minmax(0,1fr)}
+.app.desk.sidemin{--lw:72px !important}
+.desk .viewport{grid-area:main;position:relative;inset:auto;border-radius:8px;overflow:hidden;background:var(--bg)}
+.desk #nav,.desk #mini,.desk .m-only,.desk .hd > .avatar,.desk .hd > .iconbtn{display:none !important}
+.desk .d-only{display:block}
+.desk .sec.d-only{display:flex}
+.desk .mp-meta .d-only{display:inline}
+.desk .endpad{height:48px}
+.desk .sbar{display:none}
+.desk #player{z-index:20;background:#0a090c}
+.desk .fp{max-width:560px;margin:0 auto;padding-top:24px}
+.desk #sheet{align-items:center;justify-content:center}
+.desk .sheet{width:min(480px,92vw);max-height:86vh;border-radius:14px;padding:18px 22px 22px}
+.desk .sheet .grab{display:none}
+.desk #snack{left:50%;right:auto;transform:translateX(-50%);width:max-content;max-width:440px;bottom:96px}
+.desk #notes{left:auto;right:16px;width:360px;top:72px}
+.desk .tile:active,.desk .row:active,.desk .qt:active,.desk .cat:active,.desk .trk:active,.desk .ct:active,.desk .feature:active,.desk .topres:active{transform:none;opacity:1}
+
+/* top bar */
+.desk #topbar{grid-area:top;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px;padding:0 8px}
+.tb-l,.tb-r{display:flex;align-items:center;gap:8px}
+.tb-r{justify-content:flex-end}
+.tb-c{display:flex;align-items:center;gap:8px}
+.tb-round{width:48px;height:48px;border-radius:50%;background:#1f1c23;display:grid;place-items:center;color:var(--muted);flex:none}
+.tb-round:hover{color:#fff;transform:scale(1.04)}
+.tb-round.on{color:#fff}
+.tb-arrow{width:32px;height:32px;border-radius:50%;background:#121016;display:grid;place-items:center}
+.tb-arrow[disabled]{opacity:.4;cursor:not-allowed}
+.tb-arrow .ic{width:18px;height:18px}
+.tb-search{display:flex;align-items:center;gap:10px;width:min(480px,36vw);height:48px;border-radius:999px;background:#1f1c23;padding:0 8px 0 14px;color:var(--muted);cursor:text}
+.tb-search:hover{background:#2b2731}
+.tb-search:focus-within{box-shadow:0 0 0 2px #fff;color:#fff}
+.tb-search input{flex:1;min-width:0;background:transparent;border:0;outline:0;color:#fff;font:inherit;font-size:15px}
+.tb-search input::placeholder{color:var(--muted)}
+.tb-search kbd{font:inherit;font-size:11px;color:var(--dim);border:1px solid var(--line);border-radius:4px;padding:1px 5px}
+.tb-browse{border-left:1px solid var(--line);padding-left:10px;height:28px;display:grid;place-items:center;color:var(--muted)}
+.tb-browse:hover{color:#fff}
+.tb-pill{background:#fff;color:#121016;font-weight:800;font-size:13px;padding:8px 16px;border-radius:999px;white-space:nowrap}
+.tb-pill:hover{transform:scale(1.04)}
+.tb-pill.dark{background:transparent;color:var(--muted);border:0;display:flex;align-items:center;gap:6px}
+.tb-pill.dark:hover{color:#fff}
+.tb-r .iconbtn{background:#121016}
+.tb-r .avatar{border:6px solid #121016;width:44px;height:44px;box-sizing:content-box;margin:-6px}
+
+/* library sidebar */
+.desk #side{grid-area:side;display:flex;flex-direction:column;background:var(--bg);border-radius:8px;min-height:0;position:relative}
+.sd-head{display:flex;align-items:center;gap:8px;padding:14px 12px 6px 16px}
+.sd-title{display:flex;align-items:center;gap:12px;font-weight:800;font-size:16px;color:var(--muted)}
+.sd-title:hover{color:#fff}
+.sd-ic{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;color:var(--muted)}
+.sd-ic:hover{color:#fff;background:#ffffff14}
+.sd-ic .ic{width:20px;height:20px}
+.sd-chips{padding:6px 16px 4px}
+.sd-tools{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 12px 4px 16px;color:var(--muted);font-size:13px}
+.sd-tools button{display:flex;align-items:center;gap:6px;color:var(--muted)}
+.sd-tools button:hover{color:#fff}
+.sd-tools .ic{width:16px;height:16px}
+.sd-find{display:flex;align-items:center;gap:6px;background:#2b2731;border-radius:6px;padding:0 8px;height:32px;flex:1;max-width:180px}
+.sd-find input{background:transparent;border:0;outline:0;color:#fff;font:inherit;font-size:13px;width:100%}
+.sd-list{flex:1;overflow-y:auto;padding:4px 8px 12px;min-height:0}
+.sd-row{display:grid;grid-template-columns:48px minmax(0,1fr) auto;gap:12px;align-items:center;padding:6px 8px;border-radius:6px;cursor:pointer}
+.sd-row:hover{background:#ffffff12}
+.sd-row.on{background:#ffffff1f}
+.sd-row img{width:48px;height:48px;border-radius:4px;object-fit:cover;display:block}
+.sd-row .rt{font-size:15px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sd-row .rt.now{color:var(--gold)}
+.sd-row .rs{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:5px;white-space:nowrap;overflow:hidden;margin-top:2px}
+.sd-row .rs .ic{width:13px;height:13px;color:var(--gold)}
+.sd-row .eqi{color:var(--gold)}
+.sd-row .eqi .ic{width:16px;height:16px}
+.sd-row .own-tick{width:17px;height:17px;right:3px;bottom:3px}
+.sd-row .own-tick .ic{width:11px;height:11px}
+.sd-empty{margin:8px;padding:18px;border-radius:8px;background:var(--elev2)}
+.sd-empty b{display:block;font-size:16px;margin-bottom:6px}
+.sd-empty p{margin:0 0 14px;color:var(--muted);font-size:13.5px}
+.sd-resize{position:absolute;top:0;bottom:0;right:-8px;width:8px;cursor:col-resize;z-index:3}
+.sd-resize:hover,.sd-resize.drag{background:linear-gradient(90deg,transparent 3px,#ffffff40 3px,#ffffff40 5px,transparent 5px)}
+.sidemin .sd-title b,.sidemin .sd-head .sd-ic,.sidemin .sd-chips,.sidemin .sd-tools,.sidemin .sd-row > div,.sidemin .sd-row > .eqi,.sidemin .sd-empty{display:none}
+.sidemin .sd-head{justify-content:center;padding:16px 0 8px}
+.sidemin .sd-row{grid-template-columns:48px;justify-content:center}
+
+/* now playing panel */
+.desk #rpanel{grid-area:right;display:block;background:var(--bg);border-radius:8px;overflow-y:auto;min-height:0}
+.desk.norp #rpanel{display:none}
+.rp{position:relative;padding:0 16px 24px}
+.rp-head{position:sticky;top:0;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:16px 0 12px;background:var(--bg)}
+.rp-head b{font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+.rp-head b:hover{text-decoration:underline}
+.rp-cover{width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;display:block;box-shadow:0 10px 30px rgba(0,0,0,.45);cursor:pointer}
+.rp-meta{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;margin-top:16px}
+.rp-meta h2{margin:0;font-size:22px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rp-meta p{margin:4px 0 0;color:var(--muted);font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rp-meta button{color:var(--muted)} .rp-meta button.on{color:var(--gold)}
+.rp .card,.rp .about{margin-top:16px}
+.rp .pvnote{margin-top:14px}
+.rp-next h3 button{font-size:12.5px;font-weight:700;color:var(--muted)}
+.rp-next h3 button:hover{color:#fff;text-decoration:underline}
+
+/* player bar */
+.desk #pbar{grid-area:bar;display:grid;grid-template-columns:minmax(180px,30%) minmax(0,40%) minmax(180px,30%);align-items:center;padding:0 8px}
+.pb-l{display:flex;align-items:center;gap:12px;min-width:0}
+.pb-l img{width:56px;height:56px;border-radius:4px;object-fit:cover;cursor:pointer;flex:none}
+.pb-l .tx{min-width:0}
+.pb-t{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;display:flex;align-items:center;gap:6px}
+.pb-t span{overflow:hidden;text-overflow:ellipsis}
+.pb-t:hover span{text-decoration:underline}
+.pb-s{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+.pb-l .add{color:var(--muted);flex:none;display:grid;place-items:center}
+.pb-l .add .ic{width:18px;height:18px}
+.pb-l .add.on{color:var(--gold)}
+.pb-c{display:flex;flex-direction:column;align-items:center;gap:4px;width:100%;max-width:722px;justify-self:center}
+.pb-ctrls{display:flex;align-items:center;gap:20px}
+.pb-ctrls button{color:var(--muted);display:grid;place-items:center}
+.pb-ctrls button:hover{color:#fff}
+.pb-ctrls .on{color:var(--gold)}
+.pb-ctrls .ic{width:18px;height:18px}
+.pb-ctrls .pp{width:34px;height:34px;border-radius:50%;background:#fff;color:#121016}
+.pb-ctrls .pp:hover{color:#121016;transform:scale(1.06)}
+.pb-prog{display:flex;align-items:center;gap:8px;width:100%;font-size:11.5px;color:var(--muted)}
+.pb-prog span{min-width:40px;text-align:center}
+.pb-prog .seek,.pb-r .seek{margin:0;height:14px;flex:1}
+.pb-prog .seek:hover,.pb-r .seek:hover{--c:var(--gold)}
+.pb-r{display:flex;align-items:center;justify-content:flex-end;gap:14px;color:var(--muted)}
+.pb-r button{display:grid;place-items:center;color:var(--muted)}
+.pb-r button:hover{color:#fff}
+.pb-r .on{color:var(--gold)}
+.pb-r .ic{width:18px;height:18px}
+.pb-r .vol{flex:0 0 92px}
+
+/* main panel content, desktop sizes */
+.desk .shelf{display:grid;grid-template-columns:repeat(auto-fill,minmax(176px,1fr));grid-template-rows:auto;grid-auto-rows:0;row-gap:0;column-gap:0;overflow:hidden;margin:0 -12px;padding:0}
+.desk .tile{padding:12px;border-radius:8px;gap:6px;position:relative}
+.desk .tile:hover,.desk .ct:hover{background:#ffffff12}
+.desk .tile img{width:100%;height:auto;aspect-ratio:1;border-radius:6px;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.desk .tile .tt{font-size:15px}
+.desk .tplay{display:grid;place-items:center;position:absolute;right:8px;bottom:8px;width:48px;height:48px;border-radius:50%;background:var(--gold);color:var(--gold-ink);opacity:0;transform:translateY(8px);transition:opacity .2s,transform .2s;box-shadow:0 8px 16px rgba(0,0,0,.4)}
+.desk .tplay:hover{transform:scale(1.05)}
+.desk .tile:hover .tplay,.desk .ct:hover .tplay{opacity:1;transform:none}
+.desk .tile:hover .own-tick,.desk .ct:hover .own-tick{opacity:0}
+.desk .quick{grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px}
+.desk .qt{height:64px;grid-template-columns:64px minmax(0,1fr) auto;background:#ffffff14;position:relative}
+.desk .qt:hover{background:#ffffff24}
+.desk .qt img{width:64px;height:64px}
+.desk .qt span{font-size:14px}
+.desk .qplay{display:grid;place-items:center;width:36px;height:36px;margin-right:10px;border-radius:50%;background:var(--gold);color:var(--gold-ink);opacity:0;transition:opacity .2s}
+.desk .qplay .ic{width:18px;height:18px}
+.desk .qt:hover .qplay{opacity:1}
+.desk .feature{max-width:760px}
+.desk .cats{grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:20px}
+.desk .cat{height:auto;aspect-ratio:1.6;font-size:22px;padding:16px}
+.desk .cat img{width:100px;height:100px;right:-14px;bottom:-6px}
+.desk .cgrid,.desk .lgrid{grid-template-columns:repeat(auto-fill,minmax(176px,1fr));gap:0;margin:18px -12px 0}
+.desk .ct{padding:12px;border-radius:8px}
+.desk .topres{max-width:460px}
+.desk .row:hover{background:#ffffff0d;border-radius:6px}
+.desk .h-title{font-size:28px}
+
+/* mix + category pages */
+.desk .mp-head{height:64px;padding-top:0;grid-template-columns:80px minmax(0,1fr) 44px}
+.desk .mp-head > button[data-act=back]{visibility:hidden}
+.desk .mp-head .htitle{text-align:left;font-size:22px;font-weight:800}
+.desk .mp-head .pin{top:8px;left:var(--gut);right:auto;width:48px;height:48px}
+.desk .mp-hero{display:flex;align-items:flex-end;gap:24px;padding-top:8px;padding-bottom:20px}
+.desk .mp-cover{width:232px;height:232px;margin:0;border-radius:6px;flex:none;max-width:none}
+.desk .mp-info{min-width:0}
+.desk .mp-kind{display:block;font-size:14px;font-weight:600}
+.desk .mp-t{font-size:clamp(36px,5.2vw,84px);line-height:1;letter-spacing:-.035em;margin:8px 0 14px}
+.desk .cat-t{font-size:clamp(40px,6vw,88px);margin:28px 0 12px}
+.desk .mp-sub{display:flex;align-items:center;flex-wrap:wrap;gap:6px}
+.desk .mp-sub .mp-meta{margin:0}
+.desk .mp-sub .mp-meta::before{content:'• ';color:var(--muted)}
+.desk .acts{gap:24px;margin:16px 0 10px}
+.desk .acts .play{order:-1;width:56px;height:56px}
+.desk .acts .sp{display:none}
+.desk .thead,.desk .trk{display:grid;grid-template-columns:32px minmax(0,1fr) 90px 40px;gap:16px;align-items:center;padding:6px 16px;margin:0 -16px;border-radius:6px}
+.desk .thead{color:var(--muted);font-size:13px;border-bottom:1px solid var(--line);border-radius:0;margin-bottom:10px;padding-bottom:8px;position:sticky;top:64px;background:var(--bg);z-index:3}
+.desk .trk:hover{background:#ffffff14}
+.desk .tno,.desk .tst{display:block;color:var(--muted);font-size:15px;text-align:center}
+.desk .tst{text-align:right;font-size:14px}
+.desk .thead .tst{font-size:13px}
+.desk .tno .ic{display:none;width:14px;height:14px;margin:0 auto;color:#fff}
+.desk .trk:hover .tno i{display:none}
+.desk .trk:hover .tno .ic{display:block}
+.desk .tno i{font-style:normal}
+.desk .trk.cur .tno i{color:var(--gold)}
+.desk .trk .more{opacity:0}
+.desk .trk:hover .more{opacity:1}
+
+/* right-click menu */
+#ctx{position:fixed;z-index:60;min-width:220px;max-width:280px;background:#2b2731;border-radius:6px;padding:4px;box-shadow:0 16px 40px rgba(0,0,0,.6)}
+#ctx.on{display:block}
+#ctx button{display:flex;align-items:center;gap:12px;width:100%;padding:10px 12px;border-radius:4px;font-size:14px;color:#eae6ee}
+#ctx button:hover{background:#ffffff1a}
+#ctx .ic{width:18px;height:18px;color:var(--muted)}
+#ctx hr{border:0;border-top:1px solid #ffffff1a;margin:4px 0}
+
+/* QR + shortcuts */
+.qr{background:#fff;padding:12px;border-radius:12px;width:192px;height:192px;margin:4px auto;display:grid;place-items:center}
+.qr img,.qr canvas{display:block}
+.kb{display:grid;grid-template-columns:1fr auto;gap:8px 16px;padding:14px 16px;font-size:14px}
+.kb kbd{font:inherit;font-size:12px;background:var(--elev2);border:1px solid var(--line);border-radius:4px;padding:2px 7px;color:#fff;white-space:nowrap}
+.desk .list-card.kb{display:grid}
 </style>
 
 </head>
 <body>
 <div class="app" id="app">
+  <header id="topbar"></header>
+  <aside id="side" aria-label="Your Library"></aside>
+  <aside id="rpanel" aria-label="Now playing"></aside>
+  <footer id="pbar" aria-label="Player"></footer>
+  <div id="ctx" role="menu"></div>
   <div class="viewport">
     <div id="screen"></div>
     <div class="sbar"></div>
@@ -425,7 +647,7 @@ const PRICE = 19, MEMBER_PRICE = 12;
 const PREVIEW_MIN = 10, PREVIEW = PREVIEW_MIN * 60, PV = `${PREVIEW_MIN}-minute`;
 
 function fresh(){
-  return {signedIn:false, sms:false, tab:'home', homeFilter:'all', libFilter:'all', libSort:'recent', libGrid:false, q:'', qf:'all', follow:false, plan:'none',
+  return {signedIn:false, sms:false, tab:'home', homeFilter:'all', libFilter:'all', rp:true, sideMin:false, vol:80, fwd:[], libSort:'recent', libGrid:false, q:'', qf:'all', follow:false, plan:'none',
     owned:new Set(['90s5']), saved:new Set(), offline:new Set(), spent:19, cart:[], plays:{}, recent:[],
     streak:0, last:null, now:'90s5', progress:0, playing:false, preview:false, curTrack:-1,
     full:false, stack:[], device:'phone', shuffle:false, repeat:false,
@@ -445,7 +667,7 @@ const unitPrice = () => member() ? MEMBER_PRICE : PRICE;
 const itemPrice = c => c.special ?? unitPrice();
 const cover = id => COVERS[id] || '';
 /* Cover with a gold tick in the corner when the fan has bought the mix */
-const cv = id => `<span class="cv"><img src="${cover(id)}" alt="" loading="lazy">${owns(id) ? `<i class="own-tick" title="You own this mix">${ic('check')}</i>` : ''}</span>`;
+const cv = (id, playBtn) => `<span class="cv"><img src="${cover(id)}" alt="" loading="lazy">${owns(id) ? `<i class="own-tick" title="You own this mix">${ic('check')}</i>` : ''}${playBtn ? `<button class="tplay" data-act="play" data-id="${id}" aria-label="Play" title="Play">${ic('play')}</button>` : ''}</span>`;
 const col = id => (COLORS[id] || ['#4a3a55', '#2e2436']);
 const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const MONL = ['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -505,6 +727,12 @@ const ICONS = {
   addsq:'<g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3.5" y="3.5" width="17" height="17" rx="4"/><path d="M12 8v8M8 12h8"/></g>',
   menu:'<path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
   dotsv:'<g fill="currentColor"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></g>',
+  npview:'<g fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="2"/><rect x="13" y="7" width="5" height="10" rx="1" fill="currentColor" stroke="none"/></g>',
+  vol:'<g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor"/><path d="M15.5 9a4 4 0 010 6M18 6.5a7.5 7.5 0 010 11"/></g>',
+  volMute:'<g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor"/><path d="M16 9.5l5 5M21 9.5l-5 5"/></g>',
+  expand:'<g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M10 20H4v-6M20 4l-6.5 6.5M4 20l6.5-6.5"/></g>',
+  fwd:'<path d="M9 4.5l7.5 7.5L9 19.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>',
+  browse:'<g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="3" y="6" width="18" height="14" rx="2"/><path d="M6 3h12"/></g>',
   x:'<path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
 };
 const ic = n => `<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${ICONS[n]}</svg>`;
@@ -541,7 +769,7 @@ function runSplash(){
   if (!root || splashDone || root.dataset.run) return;
   root.dataset.run = '1';
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) { finishSplash(); return; }
-  const reels = [...root.querySelectorAll('.reel')], at = (ms, fn) => splashT.push(setTimeout(fn, ms));
+  const k = innerWidth >= 1024 ? 0.65 : 1, reels = [...root.querySelectorAll('.reel')], at = (ms, fn) => splashT.push(setTimeout(fn, ms * k));
   let t = 250;
   reels.forEach((r, i) => {
     at(t, () => r.classList.add('on', 'spin'));
@@ -569,7 +797,7 @@ function finishSplash(){
 
 /* ---------- home ---------- */
 function tile(m){
-  return `<div class="tile" data-act="open" data-id="${m.id}" style="cursor:pointer">${cv(m.id)}<div class="tt">${m.t}</div><div class="ts">Mixtape ${badge(m)}</div></div>`;
+  return `<div class="tile" data-act="open" data-id="${m.id}" style="cursor:pointer">${cv(m.id, true)}<div class="tt">${m.t}</div><div class="ts">Mixtape ${badge(m)}</div></div>`;
 }
 function home(){
   const f = S.homeFilter;
@@ -585,7 +813,7 @@ function home(){
   return `<div class="g">
     <div class="hd stick">${avatarBtn()}<div class="chips">${[['all','All'],['owned','Your mixes'],['new','Not owned']].map(([k,l]) => `<button class="chip ${f===k?'on':''}" data-act="hfilter" data-f="${k}">${l}</button>`).join('')}</div><span style="flex:1"></span>${cartIcon()}</div>
     ${banners}
-    ${quick.length ? `<div class="quick">${quick.map(m => `<div class="qt" data-act="open" data-id="${m.id}">${cv(m.id)}<span>${m.t}</span></div>`).join('')}</div>` : '<p class="empty">Nothing here yet.</p>'}
+    ${quick.length ? `<div class="quick">${quick.map(m => `<div class="qt" data-act="open" data-id="${m.id}">${cv(m.id)}<span>${m.t}</span><button class="qplay" data-act="play" data-id="${m.id}" aria-label="Play" title="Play">${ic('play')}</button></div>`).join('')}</div>` : '<p class="empty">Nothing here yet.</p>'}
     ${hero ? `<div class="feature" style="--fc:${col(hero.id)[1]}" data-act="open" data-id="${hero.id}">${cv(hero.id)}
       <div style="min-width:0"><div class="k">${hero.id === 'mrmrsslick' ? 'Just dropped' : 'Newest from DJ 651'}</div><div class="ft">${hero.t}</div>
       <div class="fb"><button class="playc" data-act="play" data-id="${hero.id}" aria-label="Play ${hero.t}">${ic('play')}</button>${owns(hero.id) || member() ? '' : `<button class="pill" data-act="buynow" data-id="${hero.id}">Buy $${PRICE}</button>`}</div></div></div>` : ''}
@@ -614,14 +842,14 @@ function search(){
       <div class="cats">${(() => { const used = new Set(); return CATS.map(c => { const l = c.pick(), p = l.find(m => !used.has(m.id)) || l[0]; if (p) used.add(p.id); return `<div class="cat" style="background:${c.bg}" data-act="cat" data-id="${c.id}"><span>${c.name}</span>${p ? `<img src="${cover(p.id)}" alt="">` : ''}</div>`; }).join(''); })()}</div>`;
   }
   return `<div class="g">
-    <div class="hd">${avatarBtn()}<div class="h-title">Search</div>${cartIcon()}</div>
-    <div class="stick" style="padding-top:4px;padding-bottom:8px"><label class="sbox" for="q" style="margin-top:0">${ic('search')}<input id="q" type="search" placeholder="What do you want to listen to?" value="${S.q.replace(/"/g,'&quot;')}" autocomplete="off"></label></div>
+    <div class="hd m-only">${avatarBtn()}<div class="h-title">Search</div>${cartIcon()}</div>
+    <div class="stick m-only" style="padding-top:4px;padding-bottom:8px"><label class="sbox" for="q" style="margin-top:0">${ic('search')}<input id="q" type="search" placeholder="What do you want to listen to?" value="${S.q.replace(/"/g,'&quot;')}" autocomplete="off"></label></div>
     <div style="margin-top:12px">${body}</div>
     <div class="endpad"></div></div>`;
 }
 
 /* ---------- library ---------- */
-function library(){
+function libList(){
   const f = S.libFilter;
   let list = vis().filter(m => inLib(m.id));
   if (f === 'owned') list = list.filter(m => owns(m.id));
@@ -631,14 +859,19 @@ function library(){
   if (S.libSort === 'az') list.sort((a, b) => a.t.localeCompare(b.t));
   else if (S.libSort === 'date') list.sort((a, b) => b.d.localeCompare(a.d));
   else list.sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
-  const sub = m => `${owns(m.id) || (S.offline.has(m.id) && member()) ? ic('arrow') : ''}Mixtape · DJ 651${!owns(m.id) && !member() ? ' · <span style="color:var(--hib)">locked</span>' : ''}`;
+  return list;
+}
+const libSub = m => `${owns(m.id) || (S.offline.has(m.id) && member()) ? ic('arrow') : ''}Mixtape · DJ 651${!owns(m.id) && !member() ? ' · <span style="color:var(--hib)">locked</span>' : ''}`;
+const SORTS = {recent:'Recents', az:'Alphabetical', date:'Release date'};
+function library(){
+  const f = S.libFilter, list = libList(), sub = libSub;
   return `<div class="g">
     <div class="stick" style="padding-bottom:8px"><div class="hd">${avatarBtn()}<div class="h-title">Your Library</div>${cartIcon()}</div>
     <div class="chips">${[['all','All'],['owned','Bought'],['added','Added'],['offline','Downloaded']].map(([k,l]) => `<button class="chip ${f===k?'on':''}" data-act="lfilter" data-f="${k}">${l}</button>`).join('')}</div></div>
     <div class="lsort"><button data-act="lsort" aria-label="Change sort order">${ic('sort')}${({recent:'Recents', az:'Alphabetical', date:'Release date'})[S.libSort]}</button>
       <button data-act="lview" aria-label="${S.libGrid ? 'Show as list' : 'Show as grid'}">${ic(S.libGrid ? 'list' : 'grid')}</button></div>
     ${!list.length ? '' : S.libGrid
-      ? `<div class="lgrid">${list.map(m => `<div class="ct" data-act="open" data-id="${m.id}">${cv(m.id)}<div class="tt" ${S.now===m.id && S.playing?'style="color:var(--gold)"':''}>${m.t}</div><div class="ts">${sub(m)}</div></div>`).join('')}</div>`
+      ? `<div class="lgrid">${list.map(m => `<div class="ct" data-act="open" data-id="${m.id}">${cv(m.id, true)}<div class="tt" ${S.now===m.id && S.playing?'style="color:var(--gold)"':''}>${m.t}</div><div class="ts">${sub(m)}</div></div>`).join('')}</div>`
       : list.map(m => `<div class="row big" data-act="open" data-id="${m.id}">${cv(m.id)}<div style="min-width:0"><div class="rt" ${S.now===m.id && S.playing?'style="color:var(--gold)"':''}>${m.t}</div>
       <div class="rs">${sub(m)}</div></div><span></span></div>`).join('')}
     ${list.length ? '' : `<p class="empty">${f === 'added' ? (member() ? 'Tap + on any mix to add it here.' : 'Listen members can add any mix here.') : 'Nothing here yet.'}</p>`}
@@ -664,7 +897,9 @@ function plans(){
       <label class="toggle" for="t-email"><span>Email<small>Receipts and a weekly roundup</small></span><input id="t-email" type="checkbox" checked disabled></label>
     </div>
     <div class="sec"><h2 style="font-size:18px">Get the app</h2></div>
-    <button class="btn wide" data-act="install">${platform().standalone ? `${ic('added')} Installed on this phone` : `${ic('addsq')} Add to Home Screen`}</button>
+    <button class="btn wide" data-act="install">${platform().standalone ? `${ic('added')} Installed on this phone` : platform().mobile ? `${ic('addsq')} Add to Home Screen` : `${ic('phone')} Get the app on your phone`}</button>
+    <div class="sec d-only"><h2 style="font-size:18px">Keyboard shortcuts</h2></div>
+    <div class="list-card kb d-only"><span>Play / pause</span><kbd>Space</kbd><span>Next mix</span><kbd>Ctrl →</kbd><span>Previous mix</span><kbd>Ctrl ←</kbd><span>Volume up / down</span><kbd>Ctrl ↑ ↓</kbd><span>Search</span><kbd>Ctrl K</kbd><span>Close a window or full screen</span><kbd>Esc</kbd></div>
     <div class="sec"><h2 style="font-size:18px">Demo tools</h2></div>
     <p style="margin:0 0 10px;color:var(--muted);font-size:13.5px">See what DJ 651's app does behind the scenes.</p>
     <div style="display:flex;flex-wrap:wrap;gap:8px">
@@ -686,19 +921,20 @@ function mixPage(id){
   if (own) leftActs = `<button class="a on" disabled aria-label="In your library">${ic('added')}</button><button class="a on" data-act="download" data-id="${id}" aria-label="Download MP3">${ic('dlOn')}</button>`;
   else if (member()) leftActs = `<button class="a ${S.saved.has(id)?'on':''}" data-act="save" data-id="${id}" aria-label="Add to library">${ic(S.saved.has(id)?'added':'add')}</button><button class="a ${S.offline.has(id)?'on':''}" data-act="offline" data-id="${id}" aria-label="Download in the app">${ic(S.offline.has(id)?'dlOn':'dl')}</button>`;
   else leftActs = `<button class="pill" data-act="buynow" data-id="${id}">Buy $${PRICE}</button><button class="a" data-act="addcart" data-id="${id}" aria-label="Add to cart">${ic(inCart(id)?'added':'add')}</button>`;
-  const rows = tr.length ? tr.map((t, i) => `<div class="trk ${cur && S.curTrack === i ? 'cur' : ''}" data-act="playat" data-id="${id}" data-i="${i}"><div style="min-width:0"><div class="tn">${t.t}</div><div class="ta">${t.a}</div></div><span class="more">${ic('dots')}</span></div>`).join('')
-    : `<div class="trk" data-act="play" data-id="${id}"><div style="min-width:0"><div class="tn">${m.t} (full mix)</div><div class="ta">DJ 651 · ${hrs(m.len)}</div></div><span class="more">${ic('dots')}</span></div><p class="note">DJ 651 hasn’t added the tracklist for this one yet.</p>`;
+  const total = toSecs(m.len);
+  const rows = `<div class="thead"><span class="tno">#</span><span>Title</span><span class="tst">Starts at</span><span></span></div>` + (tr.length ? tr.map((t, i) => `<div class="trk ${cur && S.curTrack === i ? 'cur' : ''}" data-act="playat" data-id="${id}" data-i="${i}"><span class="tno"><i>${i + 1}</i>${ic('play')}</span><div style="min-width:0"><div class="tn">${t.t}</div><div class="ta">${t.a}</div></div><span class="tst tab">${mmss(i / tr.length * total)}</span><span class="more" data-act="mixmore" data-id="${id}">${ic('dots')}</span></div>`).join('')
+    : `<div class="trk" data-act="play" data-id="${id}"><span class="tno"><i>1</i>${ic('play')}</span><div style="min-width:0"><div class="tn">${m.t} (full mix)</div><div class="ta">DJ 651 · ${hrs(m.len)}</div></div><span class="tst tab">0:00</span><span class="more" data-act="mixmore" data-id="${id}">${ic('dots')}</span></div><p class="note">DJ 651 hasn’t added the tracklist for this one yet.</p>`);
   return `<div class="mp" style="--pc:${c1};--pd:${c2}">
     <div class="mp-bg"></div>
     <div class="mp-head g" id="mphead"><div class="hbg"></div>
       <button data-act="back" aria-label="Back">${ic('back')}</button><div class="htitle">${m.t}</div><span></span>
       <button class="pin" data-act="${cur && S.playing ? 'toggle' : 'play'}" data-id="${id}" aria-label="Play">${ic(cur && S.playing ? 'pause' : 'play')}</button>
     </div>
-    <img class="mp-cover" src="${cover(id)}" alt="Cover of ${m.t}">
+    <div class="mp-hero g"><img class="mp-cover" src="${cover(id)}" alt="Cover of ${m.t}">
+      <div class="mp-info"><div class="mp-kind">Mixtape</div><h1 class="mp-t">${m.t}</h1>
+        <div class="mp-sub"><div class="artist"><img src="${cover('hello1')}" alt="">DJ 651</div>
+        <div class="mp-meta">Mixtape · ${fmtDate(m.d)}${latest ? ' · <b>Latest release</b>' : ''}<span class="d-only">${tr.length ? ` · ${tr.length} songs` : ''}, ${hrs(m.len)}</span></div></div></div></div>
     <div class="mp-body g">
-      <h1 class="mp-t">${m.t}</h1>
-      <div class="artist"><img src="${cover('hello1')}" alt="">DJ 651</div>
-      <div class="mp-meta">Mixtape · ${fmtDate(m.d)}${latest ? ' · <b>Latest release</b>' : ''}</div>
       <div class="acts" id="acts">${leftActs}<button class="a" data-act="mixmore" data-id="${id}" aria-label="More options">${ic('dots')}</button><span class="sp"></span>
         <button class="a ${S.shuffle?'on':''}" data-act="shuffle" aria-label="Shuffle">${ic('shuffle')}</button>
         <button class="play" data-act="${cur && S.playing ? 'toggle' : 'play'}" data-id="${id}" aria-label="Play">${ic(cur && S.playing ? 'pause' : 'play')}</button></div>
@@ -716,9 +952,9 @@ function catPage(cid){
   return `<div class="mp" style="--pc:${c.bg};--pd:${c.bg}">
     <div class="mp-bg" style="height:300px"></div>
     <div class="mp-head g" id="mphead"><div class="hbg"></div><button data-act="back" aria-label="Back">${ic('back')}</button><div class="htitle">${c.name}</div><span></span></div>
-    <div class="mp-body g"><h1 class="mp-t" style="font-size:32px;margin-top:2px">${c.name}</h1>
+    <div class="mp-body g"><h1 class="mp-t cat-t">${c.name}</h1>
       <div class="mp-meta">${list.length} mixes · DJ 651</div>
-      <div class="cgrid">${list.map(m => `<div class="ct" data-act="open" data-id="${m.id}">${cv(m.id)}<div class="tt">${m.t}</div><div class="ts">${m.genre} ${badge(m)}</div></div>`).join('')}</div>
+      <div class="cgrid">${list.map(m => `<div class="ct" data-act="open" data-id="${m.id}">${cv(m.id, true)}<div class="tt">${m.t}</div><div class="ts">${m.genre} ${badge(m)}</div></div>`).join('')}</div>
       <div class="endpad"></div></div></div>`;
 }
 function cartPage(){
@@ -792,6 +1028,81 @@ function mini(){
     <div class="bar"><i id="mbar"></i></div></div>`;
 }
 
+/* ---------- desktop regions ---------- */
+const deskMQ = matchMedia('(min-width:1024px)');
+const isDesk = () => deskMQ.matches && !$('app').classList.contains('fit');
+const songNow = () => { const tr = tracks(S.now), pct = S.preview ? (dur() / toSecs(byId[S.now].len)) * S.progress : S.progress, ti = trackAt(S.now, pct); return ti >= 0 ? tr[ti] : null; };
+function topbar(){
+  const home = S.tab === 'home' && !S.stack.length;
+  return `<div class="tb-l"><button class="tb-arrow" data-act="back" title="Go back" ${S.stack.length ? '' : 'disabled'}>${ic('back')}</button><button class="tb-arrow" data-act="fwd" title="Go forward" ${S.fwd.length ? '' : 'disabled'}>${ic('fwd')}</button></div>
+    <div class="tb-c"><button class="tb-round ${home ? 'on' : ''}" data-act="tab" data-tab="home" title="Home">${ic(home ? 'homeOn' : 'home')}</button>
+      <label class="tb-search" for="dq" title="Search">${ic('search')}<input id="dq" type="search" placeholder="What do you want to play?" autocomplete="off"><kbd>Ctrl K</kbd><button class="tb-browse" data-act="tab" data-tab="search" title="Browse">${ic('browse')}</button></label></div>
+    <div class="tb-r"><button class="tb-pill dark" data-act="install">${ic('phone')}Get the app</button>${member() ? '' : `<button class="tb-pill" data-act="plan" data-plan="listen">Try Listen</button>`}<span id="tbcart">${cartIcon()}</span>${avatarBtn()}</div>`;
+}
+function side(){
+  const f = S.libFilter, list = libList();
+  const rows = list.map(m => { const playing = S.now === m.id && S.playing, open = topPage() && topPage().id === m.id;
+    return `<div class="sd-row ${open ? 'on' : ''}" data-act="open" data-id="${m.id}" title="${m.t}">${cv(m.id)}<div style="min-width:0"><div class="rt ${S.now === m.id ? 'now' : ''}">${m.t}</div><div class="rs">${libSub(m)}</div></div>${playing ? `<span class="eqi">${ic('vol')}</span>` : '<span></span>'}</div>`; }).join('');
+  return `<div class="sd-head"><button class="sd-title" data-act="sidemin" title="${S.sideMin ? 'Open' : 'Collapse'} Your Library">${ic(S.sideMin ? 'library' : 'libraryOn')}<b>Your Library</b></button><span style="flex:1"></span>
+      <button class="sd-ic" data-act="tab" data-tab="search" title="Find mixes">${ic('add')}</button><button class="sd-ic" data-act="tab" data-tab="library" title="Show Your Library in the main view">${ic('expand')}</button></div>
+    <div class="chips sd-chips">${[['all','All'],['owned','Bought'],['added','Added'],['offline','Downloaded']].map(([k,l]) => `<button class="chip ${f===k?'on':''}" data-act="lfilter" data-f="${k}">${l}</button>`).join('')}</div>
+    <div class="sd-tools"><label class="sd-find" title="Search in Your Library">${ic('search')}<input id="sdq" type="search" placeholder="Search in Your Library" autocomplete="off"></label><button data-act="lsort" title="Change sort order">${SORTS[S.libSort]} ${ic('sort')}</button></div>
+    <div class="sd-list" id="sdlist">${rows || `<div class="sd-empty"><b>${f === 'all' ? 'Build your library' : 'Nothing here yet'}</b><p>${f === 'added' ? (member() ? 'Add any mix with the + button.' : 'Listen members can add any mix here.') : 'Mixes you buy or add show up here.'}</p><button class="pill" data-act="tab" data-tab="search">Browse mixes</button></div>`}</div>
+    <div class="sd-resize" id="sdres" title="Drag to resize"></div>`;
+}
+function rpanel(){
+  const m = byId[S.now], own = owns(m.id), t = songNow(), nx = upNext()[0];
+  const addIcon = own || S.saved.has(m.id) ? 'added' : 'add';
+  let cta;
+  if (own) cta = `<div class="card plain"><h3>You own this mix</h3><p style="margin:0;color:var(--muted);font-size:13.5px">Download the MP3 to your computer any time.</p><div class="cta"><button class="btn white" data-act="download" data-id="${m.id}">${ic('arrow')} Download MP3</button></div></div>`;
+  else if (member()) cta = `<div class="card plain"><h3>Keep it forever</h3><p style="margin:0;color:var(--muted);font-size:13.5px">It's included with Listen. Buy the MP3 to keep it even if you cancel.</p><div class="cta"><button class="btn gold" data-act="buynow" data-id="${m.id}">Buy for $${MEMBER_PRICE}</button></div></div>`;
+  else cta = `<div class="card plain"><h3>Own this mix</h3><p style="margin:0;color:var(--muted);font-size:13.5px">Buy it to keep and download, or stream every mix with Listen.</p><div class="cta"><button class="btn gold" data-act="buynow" data-id="${m.id}">Buy now $${PRICE}</button><button class="btn ghost" data-act="plan" data-plan="listen">Listen $29/mth</button></div></div>`;
+  return `<div class="rp"><div class="rp-head"><b data-act="open" data-id="${m.id}">${m.t}</b><button class="sd-ic" data-act="rptoggle" title="Hide Now Playing view">${ic('x')}</button></div>
+    <img class="rp-cover" src="${cover(m.id)}" alt="Cover of ${m.t}" data-act="open" data-id="${m.id}">
+    <div class="rp-meta"><div style="min-width:0"><h2 id="rpsong">${t ? t.t : m.t}</h2><p id="rpart">${t && t.a !== 'DJ 651' ? `${t.a} · ` : ''}DJ 651</p></div>
+      <button class="${addIcon === 'added' ? 'on' : ''}" data-act="${own ? 'noop' : member() ? 'save' : 'buynow'}" data-id="${m.id}" title="${own ? 'You own this mix' : member() ? 'Add to Your Library' : 'Buy this mix'}">${ic(addIcon)}</button></div>
+    ${S.preview ? `<div class="pvnote"><b>${PV} preview.</b> Buy this mix for $${PRICE}, or stream every mix for $29 a month.</div>` : ''}
+    ${cta}
+    <div class="about"><div class="ab-img" style="background-image:url(${cover('hello1')})"><span>About the artist</span></div>
+      <div class="ab-b"><b>DJ 651</b><div class="ab-row"><span>${vis().length} mixes on Six.5.One</span><button class="pill ${S.follow ? 'line' : ''}" data-act="follow">${S.follow ? 'Following' : 'Follow'}</button></div>
+      <p>Mixtapes across R&amp;B, hip hop, reggae, island and Pacific sounds, from The 90's Tape to We Are 685.</p></div></div>
+    ${nx ? `<div class="card plain rp-next"><h3>Next in queue <button data-act="queue">Open queue</button></h3><div class="row" data-act="play" data-id="${nx.id}">${cv(nx.id)}<div style="min-width:0"><div class="rt">${nx.t}</div><div class="rs">DJ 651 ${canPlay(nx.id) ? '' : '<span class="badge pv">Preview</span>'}</div></div><span></span></div></div>` : ''}
+  </div>`;
+}
+function pbar(){
+  const m = byId[S.now], own = owns(m.id), t = songNow();
+  const addIcon = own || S.saved.has(m.id) ? 'added' : 'add';
+  const volIc = S.vol === 0 ? 'volMute' : 'vol';
+  return `<div class="pb-l"><img src="${cover(m.id)}" alt="" data-act="open" data-id="${m.id}" title="Open ${m.t}">
+      <div class="tx"><div class="pb-t" data-act="open" data-id="${m.id}"><span>${m.t}</span>${S.preview ? '<i class="badge pv" style="font-style:normal">Preview</i>' : ''}</div><div class="pb-s" id="pbsub">${t ? `${t.t} · ${t.a}` : 'DJ 651'}</div></div>
+      <button class="add ${addIcon === 'added' ? 'on' : ''}" data-act="${own ? 'noop' : member() ? 'save' : 'buynow'}" data-id="${m.id}" title="${own ? 'You own this mix' : member() ? 'Add to Your Library' : 'Buy this mix'}">${ic(addIcon)}</button></div>
+    <div class="pb-c"><div class="pb-ctrls">
+        <button class="${S.shuffle ? 'on' : ''}" data-act="shuffle" title="Shuffle">${ic('shuffle')}</button>
+        <button data-act="prev" title="Previous">${ic('prev')}</button>
+        <button class="pp" data-act="toggle" title="${S.playing ? 'Pause' : 'Play'} (Space)">${ic(S.playing ? 'pause' : 'play')}</button>
+        <button data-act="next" title="Next">${ic('next')}</button>
+        <button class="${S.repeat ? 'on' : ''}" data-act="repeat" title="Repeat">${ic('repeat')}</button></div>
+      <div class="pb-prog tab"><span id="pbtel">0:00</span><input class="seek ${S.preview ? 'pv' : ''}" id="pbseek" type="range" min="0" max="1000" value="0" aria-label="Seek"><span>${mmss(dur())}</span></div></div>
+    <div class="pb-r"><button class="${S.rp ? 'on' : ''}" data-act="rptoggle" title="Now playing view">${ic('npview')}</button>
+      <button data-act="queue" title="Queue">${ic('queue')}</button>
+      <button class="${S.device !== 'phone' ? 'on' : ''}" data-act="devices" title="Connect to a device">${ic('devices')}</button>
+      <button data-act="mute" title="${S.vol === 0 ? 'Unmute' : 'Mute'}">${ic(volIc)}</button><input class="seek vol" id="vol" type="range" min="0" max="100" value="${S.vol}" aria-label="Volume" style="--p:${S.vol}%">
+      <button data-act="fullscreen" title="Full screen">${ic('expand')}</button></div>`;
+}
+let lastW = null;
+function renderDesk(){
+  const app = $('app');
+  if (lastW) app.style.setProperty('--lw', lastW + 'px'); else app.style.removeProperty('--lw');
+  $('topbar').innerHTML = topbar();
+  const dq = $('dq'); if (dq) dq.value = S.q;
+  const sl = $('sdlist'), sk = sl ? sl.scrollTop : 0;
+  $('side').innerHTML = side();
+  if ($('sdlist')) $('sdlist').scrollTop = sk;
+  const rp = $('rpanel'), rk = rp.scrollTop;
+  rp.innerHTML = S.rp ? rpanel() : ''; rp.scrollTop = rk;
+  $('pbar').innerHTML = pbar();
+}
+
 /* ---------- render ---------- */
 function render(){
   const sc = $('screen'), keep = sc.scrollTop, same = sc.dataset.k === S.tab;
@@ -814,6 +1125,12 @@ function render(){
   $('app').scrollTop = 0;
   $('app').classList.toggle('playing', S.playing);
   $('app').classList.toggle('full', S.signedIn && S.full);
+  const D = isDesk() && S.signedIn;
+  $('app').classList.toggle('desk', D);
+  $('app').classList.toggle('norp', D && !S.rp);
+  $('app').classList.toggle('sidemin', D && S.sideMin);
+  if (D) { const typing = document.activeElement && document.activeElement.id; renderDesk(); if (typing === 'dq' && $('dq')) { const q = $('dq'); q.focus(); q.setSelectionRange(q.value.length, q.value.length); } }
+  else ['topbar','side','rpanel','pbar'].forEach(k => { $(k).innerHTML = ''; });
   updateProgress();
   if (!S.signedIn) setTimeout(runSplash, 30);
   syncAudio();
@@ -825,10 +1142,14 @@ function updateProgress(){
   if (seek) { if (document.activeElement !== seek) seek.value = Math.round(S.progress*10); seek.style.setProperty('--p', S.progress + '%'); }
   if ($('tel')) $('tel').textContent = mmss(el);
   if ($('mbar')) $('mbar').style.width = S.progress + '%';
+  const ps = $('pbseek'); if (ps) { if (document.activeElement !== ps) ps.value = Math.round(S.progress*10); ps.style.setProperty('--p', S.progress + '%'); }
+  if ($('pbtel')) $('pbtel').textContent = mmss(el);
   const pct = S.preview ? (dur() / toSecs(byId[S.now].len)) * S.progress : S.progress;
   const ti = trackAt(S.now, pct), tr = tracks(S.now);
   if ($('fpnow')) $('fpnow').textContent = ti >= 0 ? `${tr[ti].t} · ${tr[ti].a}` : 'DJ 651';
   if ($('msub') && ti >= 0) $('msub').textContent = `${S.preview ? 'Preview · ' : ''}${tr[ti].t} · ${tr[ti].a}`;
+  if ($('pbsub')) $('pbsub').textContent = ti >= 0 ? `${tr[ti].t} · ${tr[ti].a}` : 'DJ 651';
+  if ($('rpsong')) { $('rpsong').textContent = ti >= 0 ? tr[ti].t : byId[S.now].t; $('rpart').textContent = ti >= 0 && tr[ti].a !== 'DJ 651' ? `${tr[ti].a} · DJ 651` : 'DJ 651'; }
   if (ti !== S.curTrack) {
     S.curTrack = ti;
     updateMeta();
@@ -914,7 +1235,7 @@ const installSaid = () => { try { return localStorage.getItem('six51-installed')
 const markInstalled = () => { try { localStorage.setItem('six51-installed', '1'); } catch (e) {} };
 const needsInstall = () => { const P = platform(); return P.mobile && !P.standalone && !P.framed && (P.inApp || !installSaid()); };
 function installSheet(){
-  const P = platform(), url = location.href.split('#')[0];
+  const P = platform(), url = P.mobile ? location.href.split('#')[0] : appUrl();
   if (P.standalone) { openSheet(`<div class="iapp">651</div><h2 class="c">You're all set</h2><p class="c">You're using the installed app. Open it any time from your Home Screen.</p><button class="btn ghost wide" data-act="closesheet">Done</button>`); return; }
   const step = (n, html) => `<div class="istep"><span class="n">${n}</span><div>${html}</div></div>`;
   const chip = (icon, label) => `<span class="ichip">${ic(icon)}${label || ''}</span>`;
@@ -950,19 +1271,32 @@ function installSheet(){
       actions = `<button class="btn gold wide" data-act="installdone">I've done it</button>`;
     }
   } else {
-    title = 'Get it on your phone';
+    title = 'Get the app on your phone';
     intro = 'Open this link on your phone to install Six.5.One.';
-    actions = `<div class="ilink">${url}</div><button class="btn gold wide" data-act="copylink">Copy link</button>`;
+    intro = 'Scan this with your phone camera, then follow the steps to add it to your home screen.';
+    actions = `<div class="qr" id="qr"></div><div class="ilink">${url}</div><button class="btn gold wide" data-act="copylink">Copy link</button>`;
   }
-  openSheet(`<div class="iapp">651</div><h2 class="c">${title}</h2><p class="c">${intro}</p>${steps}${actions}<button class="btn ghost wide" data-act="installlater">Not now</button>`);
+  openSheet(`<div class="iapp">651</div><h2 class="c">${title}</h2><p class="c">${intro}</p>${steps}${actions}<button class="btn ghost wide" data-act="installlater">${P.mobile ? 'Not now' : 'Close'}</button>`);
+  if (!P.mobile) drawQR(url);
 }
 function maybeInstall(){
   if (installAsked || !needsInstall()) return;
   installAsked = true;
   setTimeout(() => { if ($('sheet').hidden) installSheet(); }, 900);
 }
+const APP_URL = 'https://lee-synca.github.io/dj651-app/';
+const appUrl = () => /github\.io$/.test(location.hostname) ? location.href.split('#')[0] : APP_URL;
+function drawQR(url){
+  const box = $('qr'); if (!box) return;
+  const go = () => { try { box.innerHTML = ''; new QRCode(box, {text: url, width: 168, height: 168, colorDark: '#121016', colorLight: '#ffffff'}); } catch (e) { box.remove(); } };
+  if (window.QRCode) { go(); return; }
+  const sc = document.createElement('script');
+  sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';
+  sc.onload = go; sc.onerror = () => box.remove();
+  document.head.appendChild(sc);
+}
 function copyLink(){
-  const url = location.href.split('#')[0];
+  const url = platform().mobile ? location.href.split('#')[0] : appUrl();
   const done = () => toast('Link copied', `Paste it into ${platform().ios ? 'Safari' : 'Chrome'}.`);
   if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(done, () => toast('Copy this link', url));
   else toast('Copy this link', url);
@@ -1126,7 +1460,10 @@ function bought(ids, total){
 
 /* ---------- events ---------- */
 document.addEventListener('input', e => {
-  if (e.target.id === 'seek') { S.progress = e.target.value / 10; updateProgress(); }
+  if (e.target.id === 'seek' || e.target.id === 'pbseek') { S.progress = e.target.value / 10; updateProgress(); updatePosition(true); }
+  if (e.target.id === 'vol') { setVol(+e.target.value, true); }
+  if (e.target.id === 'dq') { S.q = e.target.value; S.tab = 'search'; S.stack = []; S.full = false; render(); }
+  if (e.target.id === 'sdq') { const q = e.target.value.trim().toLowerCase(); document.querySelectorAll('#sdlist .sd-row').forEach(r => { r.style.display = !q || r.title.toLowerCase().includes(q) ? '' : 'none'; }); }
   if (e.target.id === 'q') { S.q = e.target.value; const pos = e.target.selectionStart; render(); const q = $('q'); if (q) { q.focus(); q.setSelectionRange(pos, pos); } }
 });
 document.addEventListener('change', e => {
@@ -1137,8 +1474,10 @@ document.addEventListener('click', e => {
   if (swiped) { swiped = false; e.preventDefault(); return; }
   if (e.target.id === 'sheet') { closeSheet(); return; }
   if (!splashDone && e.target.closest('#signin')) { finishSplash(); return; }
+  hideCtx();
   const b = e.target.closest('[data-act]'); if (!b || b.disabled) return;
   const a = b.dataset.act, id = b.dataset.id;
+  if (['open','openfrom','cat','cart','tab'].includes(a)) S.fwd = [];
   switch (a){
     case 'noop': return;
     case 'signin': S.signedIn = true; S.full = false; S.tab = 'home'; break;
@@ -1154,7 +1493,12 @@ document.addEventListener('click', e => {
     case 'openfrom': S.full = false; openMix(id); break;
     case 'cat': S.stack.push({type:'cat', id}); break;
     case 'cart': S.stack.push({type:'cart'}); S.full = false; closeSheet(); break;
-    case 'back': S.stack.pop(); break;
+    case 'back': { const pg = S.stack.pop(); if (pg) S.fwd.push(pg); break; }
+    case 'fwd': { const pg = S.fwd.pop(); if (pg) S.stack.push(pg); break; }
+    case 'rptoggle': S.rp = !S.rp; break;
+    case 'sidemin': S.sideMin = !S.sideMin; break;
+    case 'mute': setVol(S.vol === 0 ? (S.lastVol || 80) : 0); return;
+    case 'fullscreen': S.full = true; render(); try { if (document.documentElement.requestFullscreen && !document.fullscreenElement) document.documentElement.requestFullscreen().catch(() => {}); } catch (err) {} return;
     case 'expand': S.full = true; break;
     case 'collapse': collapse(); return;
     case 'shop': closeSheet(); S.stack = []; S.full = false; S.tab = 'home'; S.homeFilter = 'new'; render(); $('screen').scrollTop = 0; return;
@@ -1167,12 +1511,7 @@ document.addEventListener('click', e => {
     case 'seekto': {
       if (S.preview) return;
       S.progress = (+b.dataset.i) / tracks(S.now).length * 100 + 0.01; S.curTrack = -2; updateProgress(); return; }
-    case 'toggle':
-      if (S.progress >= 100) { play(S.now); return; }
-      if (!S.playing && S.last !== S.now) { play(S.now, {keep:true}); return; }
-      S.playing = !S.playing;
-      if (S.playing && !timer) timer = setInterval(tick, 120);
-      break;
+    case 'toggle': togglePlay(); return;
     case 'next': { const l = upNext(); play(S.shuffle ? l[Math.floor(Math.random()*l.length)].id : l[0].id); return; }
     case 'prev': {
       if (S.progress > 8) { S.progress = 0; updateProgress(); return; }
@@ -1184,7 +1523,9 @@ document.addEventListener('click', e => {
     case 'queue': queueSheet(); return;
     case 'queueadd': playNext = id; closeSheet(); toast('Playing next', byId[id].t); break;
     case 'share': closeSheet(); toast('Link copied', 'Send it to a friend. Demo only.'); return;
-    case 'mixmore': moreSheet(id); return;
+    case 'mixmore':
+      if (isDesk() && S.signedIn) { const r = b.getBoundingClientRect(); openCtx(id, r.left, r.bottom + 4); return; }
+      moreSheet(id); return;
     case 'buynow': buyNow(id); return;
     case 'buyspecial': buyNow(id, member() ? 10 : 15); return;
     case 'pay': {
@@ -1281,6 +1622,8 @@ document.addEventListener('click', e => {
 });
 
 function collapse(){
+  if (document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(() => {});
+  if (isDesk()) { S.full = false; render(); return; }
   S.full = false;
   const t = topPage();
   if (!t || t.type !== 'mix' || t.id !== S.now) openMix(S.now);
@@ -1356,6 +1699,86 @@ fitPhone();
 addEventListener('resize', fitPhone);
 addEventListener('offline', () => toast('You’re offline', 'Your bought and downloaded mixes still play.'));
 addEventListener('online', () => toast('Back online'));
+
+function togglePlay(){
+  if (S.progress >= 100) { play(S.now); return; }
+  if (!S.playing && S.last !== S.now) { play(S.now, {keep:true}); return; }
+  S.playing = !S.playing;
+  if (S.playing && !timer) timer = setInterval(tick, 120);
+  render();
+}
+function setVol(v, fromSlider){
+  v = Math.max(0, Math.min(100, Math.round(v)));
+  if (v > 0) S.lastVol = v;
+  S.vol = v; audio.volume = v / 100;
+  const sl = $('vol'); if (sl) { if (!fromSlider) sl.value = v; sl.style.setProperty('--p', v + '%'); }
+  const mb = document.querySelector('[data-act=mute]'); if (mb) { mb.innerHTML = ic(v === 0 ? 'volMute' : 'vol'); mb.title = v === 0 ? 'Unmute' : 'Mute'; }
+}
+
+/* Right-click menu on any mix (desktop) */
+function openCtx(id, x, y){
+  const m = byId[id]; if (!m) return;
+  const own = owns(id), item = (act, icon, label, extra = '') => `<button data-act="${act}" data-id="${id}" ${extra}>${ic(icon)}${label}</button>`;
+  const html = [
+    item('play', 'play', canPlay(id) ? 'Play' : `Play ${PV} preview`),
+    item('queueadd', 'queue', 'Play next'),
+    '<hr>',
+    own ? item('download', 'dl', 'Download MP3') : item('buynow', 'tag', `Buy · $${unitPrice()}`),
+    own ? '' : item('addcart', 'cart', inCart(id) ? 'Remove from cart' : 'Add to cart'),
+    member() && !own ? item('save', S.saved.has(id) ? 'added' : 'add', S.saved.has(id) ? 'Remove from Your Library' : 'Add to Your Library') : '',
+    '<hr>',
+    item('open', 'browse', 'Go to mix'),
+    item('share', 'share', 'Share'),
+  ].join('');
+  const box = $('ctx'); box.innerHTML = html; box.classList.add('on');
+  const w = box.offsetWidth, h = box.offsetHeight;
+  box.style.left = Math.min(x, innerWidth - w - 8) + 'px';
+  box.style.top = Math.min(y, innerHeight - h - 8) + 'px';
+}
+function hideCtx(){ const box = $('ctx'); if (box && box.classList.contains('on')) { box.classList.remove('on'); box.innerHTML = ''; } }
+document.addEventListener('contextmenu', e => {
+  if (!isDesk() || !S.signedIn) return;
+  const el = e.target.closest('[data-id]');
+  if (!el || !byId[el.dataset.id] || e.target.closest('input')) return;
+  e.preventDefault(); openCtx(el.dataset.id, e.clientX, e.clientY);
+});
+addEventListener('scroll', hideCtx, true);
+addEventListener('resize', hideCtx);
+
+/* Keyboard shortcuts (desktop) */
+document.addEventListener('keydown', e => {
+  if (!S.signedIn) return;
+  const el = document.activeElement, typing = el && /INPUT|TEXTAREA/.test(el.tagName) && el.type !== 'range' && el.type !== 'checkbox';
+  const mod = e.ctrlKey || e.metaKey;
+  if (e.key === 'Escape') { hideCtx(); if (!$('sheet').hidden) closeSheet(); else if (S.full) collapse(); else if (typing) el.blur(); return; }
+  if (mod && e.key.toLowerCase() === 'k') { e.preventDefault(); if (isDesk()) $('dq').focus(); else { S.tab = 'search'; S.stack = []; render(); if ($('q')) $('q').focus(); } return; }
+  if (typing) return;
+  if (e.code === 'Space') { e.preventDefault(); togglePlay(); return; }
+  if (mod && e.key === 'ArrowRight') { e.preventDefault(); skip(1); return; }
+  if (mod && e.key === 'ArrowLeft') { e.preventDefault(); skip(-1); return; }
+  if (mod && e.key === 'ArrowUp') { e.preventDefault(); setVol(S.vol + 10); return; }
+  if (mod && e.key === 'ArrowDown') { e.preventDefault(); setVol(S.vol - 10); return; }
+});
+/* Focusing the top-bar search opens Search, like Spotify */
+document.addEventListener('focusin', e => { if (e.target.id === 'dq' && (S.tab !== 'search' || S.stack.length)) { S.tab = 'search'; S.stack = []; render(); } });
+
+/* Drag the sidebar edge to resize it; drag it narrow to collapse */
+document.addEventListener('mousedown', e => {
+  if (e.target.id !== 'sdres') return;
+  e.preventDefault();
+  const app = $('app'), x0 = e.clientX, w0 = $('side').getBoundingClientRect().width, bar = e.target;
+  bar.classList.add('drag');
+  const mv = ev => {
+    let w = w0 + ev.clientX - x0;
+    if (w < 160) { if (!S.sideMin) { S.sideMin = true; app.classList.add('sidemin'); } return; }
+    if (S.sideMin) { S.sideMin = false; app.classList.remove('sidemin'); }
+    w = Math.max(220, Math.min(460, w)); lastW = w; app.style.setProperty('--lw', w + 'px');
+  };
+  const up = () => { removeEventListener('mousemove', mv); removeEventListener('mouseup', up); bar.classList.remove('drag'); render(); };
+  addEventListener('mousemove', mv); addEventListener('mouseup', up);
+});
+deskMQ.addEventListener('change', () => render());
+document.addEventListener('fullscreenchange', () => { if (!document.fullscreenElement && S.full && isDesk()) { S.full = false; render(); } });
 render();
 </script>
 
