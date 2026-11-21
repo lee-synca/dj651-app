@@ -134,6 +134,11 @@ button:active{opacity:.7}
 .app:not(.playing) .trk.cur .tn::before{animation-play-state:paused}
 @media (prefers-reduced-motion:reduce){.trk.cur .tn::before,.snack{animation:none}}
 
+.cv{position:relative;display:block;flex:none;line-height:0}
+.own-tick{position:absolute;right:6px;bottom:6px;width:24px;height:24px;border-radius:50%;background:var(--gold);color:var(--gold-ink);display:grid;place-items:center;box-shadow:0 2px 8px rgba(0,0,0,.55)}
+.own-tick .ic{width:15px;height:15px}
+.row .own-tick,.qt .own-tick{width:17px;height:17px;right:3px;bottom:3px}
+.row .own-tick .ic,.qt .own-tick .ic{width:11px;height:11px}
 /* ---------- home ---------- */
 .quick{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
 .qt{display:grid;grid-template-columns:56px minmax(0,1fr);align-items:center;gap:10px;background:var(--elev2);border-radius:5px;overflow:hidden;height:56px;cursor:pointer}
@@ -425,6 +430,8 @@ const inLib = id => owns(id) || S.saved.has(id);
 const unitPrice = () => member() ? MEMBER_PRICE : PRICE;
 const itemPrice = c => c.special ?? unitPrice();
 const cover = id => COVERS[id] || '';
+/* Cover with a gold tick in the corner when the fan has bought the mix */
+const cv = id => `<span class="cv"><img src="${cover(id)}" alt="" loading="lazy">${owns(id) ? `<i class="own-tick" title="You own this mix">${ic('check')}</i>` : ''}</span>`;
 const col = id => (COLORS[id] || ['#4a3a55', '#2e2436']);
 const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const MONL = ['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -472,6 +479,7 @@ const ICONS = {
   sort:'<g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4v16M4.5 16.5L8 20l3.5-3.5M16 20V4M12.5 7.5L16 4l3.5 3.5"/></g>',
   grid:'<g fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="6.5" height="6.5" rx="1"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1"/></g>',
   list:'<g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r=".9" fill="currentColor"/><circle cx="4.5" cy="12" r=".9" fill="currentColor"/><circle cx="4.5" cy="18" r=".9" fill="currentColor"/></g>',
+  check:'<path d="M6.5 12.5l3.5 3.5 7.5-8" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>',
   x:'<path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
 };
 const ic = n => `<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${ICONS[n]}</svg>`;
@@ -535,7 +543,7 @@ function finishSplash(){
 
 /* ---------- home ---------- */
 function tile(m){
-  return `<div class="tile" data-act="open" data-id="${m.id}" style="cursor:pointer"><img src="${cover(m.id)}" alt="" loading="lazy"><div class="tt">${m.t}</div><div class="ts">Mixtape ${badge(m)}</div></div>`;
+  return `<div class="tile" data-act="open" data-id="${m.id}" style="cursor:pointer">${cv(m.id)}<div class="tt">${m.t}</div><div class="ts">Mixtape ${badge(m)}</div></div>`;
 }
 function home(){
   const f = S.homeFilter;
@@ -550,8 +558,8 @@ function home(){
   return `<div class="g">
     <div class="hd stick">${avatarBtn()}<div class="chips">${[['all','All'],['owned','Your mixes'],['new','Not owned']].map(([k,l]) => `<button class="chip ${f===k?'on':''}" data-act="hfilter" data-f="${k}">${l}</button>`).join('')}</div><span style="flex:1"></span>${cartIcon()}</div>
     ${banners}
-    ${quick.length ? `<div class="quick">${quick.map(m => `<div class="qt" data-act="open" data-id="${m.id}"><img src="${cover(m.id)}" alt=""><span>${m.t}</span></div>`).join('')}</div>` : '<p class="empty">Nothing here yet.</p>'}
-    ${hero ? `<div class="feature" style="--fc:${col(hero.id)[1]}" data-act="open" data-id="${hero.id}"><img src="${cover(hero.id)}" alt="">
+    ${quick.length ? `<div class="quick">${quick.map(m => `<div class="qt" data-act="open" data-id="${m.id}">${cv(m.id)}<span>${m.t}</span></div>`).join('')}</div>` : '<p class="empty">Nothing here yet.</p>'}
+    ${hero ? `<div class="feature" style="--fc:${col(hero.id)[1]}" data-act="open" data-id="${hero.id}">${cv(hero.id)}
       <div style="min-width:0"><div class="k">${hero.id === 'mrmrsslick' ? 'Just dropped' : 'Newest from DJ 651'}</div><div class="ft">${hero.t}</div>
       <div class="fb"><button class="playc" data-act="play" data-id="${hero.id}" aria-label="Play ${hero.t}">${ic('play')}</button>${owns(hero.id) || member() ? '' : `<button class="pill" data-act="buynow" data-id="${hero.id}">Buy $${PRICE}</button>`}</div></div></div>` : ''}
     ${shelves.filter(([,ms]) => ms.length).map(([n, ms, cid]) => `<div class="sec"><h2>${n}</h2>${cid && ms.length > 10 ? `<button data-act="cat" data-id="${cid}">Show all</button>` : ''}</div><div class="shelf">${ms.slice(0, 10).map(tile).join('')}</div>`).join('')}
@@ -567,10 +575,10 @@ function search(){
     const songs = [];
     vis().forEach(m => tracks(m.id).forEach((t, i) => { if ((t.t + ' ' + t.a).toLowerCase().includes(q) && i > 0) songs.push({m, t, i}); }));
     const f = S.qf, top = f === 'all' ? mixes[0] : null;
-    const mixRows = (f === 'all' ? mixes.slice(1) : mixes).map(m => `<div class="row" data-act="open" data-id="${m.id}"><img src="${cover(m.id)}" alt="" loading="lazy"><div style="min-width:0"><div class="rt">${m.t}</div><div class="rs">Mixtape · DJ 651 ${badge(m)}</div></div><span></span></div>`).join('');
-    const songRows = songs.slice(0, 20).map(s => `<div class="row" data-act="playat" data-id="${s.m.id}" data-i="${s.i}"><img src="${cover(s.m.id)}" alt="" loading="lazy"><div style="min-width:0"><div class="rt">${s.t.t}</div><div class="rs">Song · ${s.t.a} · in ${s.m.t}</div></div><span></span></div>`).join('');
+    const mixRows = (f === 'all' ? mixes.slice(1) : mixes).map(m => `<div class="row" data-act="open" data-id="${m.id}">${cv(m.id)}<div style="min-width:0"><div class="rt">${m.t}</div><div class="rs">Mixtape · DJ 651 ${badge(m)}</div></div><span></span></div>`).join('');
+    const songRows = songs.slice(0, 20).map(s => `<div class="row" data-act="playat" data-id="${s.m.id}" data-i="${s.i}">${cv(s.m.id)}<div style="min-width:0"><div class="rt">${s.t.t}</div><div class="rs">Song · ${s.t.a} · in ${s.m.t}</div></div><span></span></div>`).join('');
     body = `<div class="chips" style="margin-bottom:6px">${[['all','All'],['mixes','Mixes'],['songs','Songs']].map(([k,l]) => `<button class="chip ${f===k?'on':''}" data-act="qfilter" data-f="${k}">${l}</button>`).join('')}</div>
-      ${top ? `<div class="sec" style="margin-top:14px"><h2 style="font-size:18px">Top result</h2></div><div class="topres" data-act="open" data-id="${top.id}"><img src="${cover(top.id)}" alt=""><div class="tt">${top.t}</div><div class="rs" style="font-size:13px;color:var(--muted);display:flex;gap:6px;align-items:center">Mixtape · DJ 651 ${badge(top)}</div><button class="playc" data-act="play" data-id="${top.id}" aria-label="Play ${top.t}">${ic('play')}</button></div>` : ''}
+      ${top ? `<div class="sec" style="margin-top:14px"><h2 style="font-size:18px">Top result</h2></div><div class="topres" data-act="open" data-id="${top.id}">${cv(top.id)}<div class="tt">${top.t}</div><div class="rs" style="font-size:13px;color:var(--muted);display:flex;gap:6px;align-items:center">Mixtape · DJ 651 ${badge(top)}</div><button class="playc" data-act="play" data-id="${top.id}" aria-label="Play ${top.t}">${ic('play')}</button></div>` : ''}
       ${f !== 'songs' && mixRows ? `${f === 'all' ? '<div class="sec" style="margin-top:22px"><h2 style="font-size:18px">Mixes</h2></div>' : ''}${mixRows}` : ''}
       ${f !== 'mixes' && songRows ? `${f === 'all' ? '<div class="sec" style="margin-top:22px"><h2 style="font-size:18px">Songs</h2></div>' : ''}${songRows}` : ''}
       ${!mixes.length && !songs.length ? `<p class="empty">No mixes or songs match “${S.q.replace(/</g,'&lt;')}”. Try an artist like 2Pac or Rihanna.</p>` : ''}`;
@@ -603,8 +611,8 @@ function library(){
     <div class="lsort"><button data-act="lsort" aria-label="Change sort order">${ic('sort')}${({recent:'Recents', az:'Alphabetical', date:'Release date'})[S.libSort]}</button>
       <button data-act="lview" aria-label="${S.libGrid ? 'Show as list' : 'Show as grid'}">${ic(S.libGrid ? 'list' : 'grid')}</button></div>
     ${!list.length ? '' : S.libGrid
-      ? `<div class="lgrid">${list.map(m => `<div class="ct" data-act="open" data-id="${m.id}"><img src="${cover(m.id)}" alt="" loading="lazy"><div class="tt" ${S.now===m.id && S.playing?'style="color:var(--gold)"':''}>${m.t}</div><div class="ts">${sub(m)}</div></div>`).join('')}</div>`
-      : list.map(m => `<div class="row big" data-act="open" data-id="${m.id}"><img src="${cover(m.id)}" alt="" loading="lazy"><div style="min-width:0"><div class="rt" ${S.now===m.id && S.playing?'style="color:var(--gold)"':''}>${m.t}</div>
+      ? `<div class="lgrid">${list.map(m => `<div class="ct" data-act="open" data-id="${m.id}">${cv(m.id)}<div class="tt" ${S.now===m.id && S.playing?'style="color:var(--gold)"':''}>${m.t}</div><div class="ts">${sub(m)}</div></div>`).join('')}</div>`
+      : list.map(m => `<div class="row big" data-act="open" data-id="${m.id}">${cv(m.id)}<div style="min-width:0"><div class="rt" ${S.now===m.id && S.playing?'style="color:var(--gold)"':''}>${m.t}</div>
       <div class="rs">${sub(m)}</div></div><span></span></div>`).join('')}
     ${list.length ? '' : `<p class="empty">${f === 'added' ? (member() ? 'Tap + on any mix to add it here.' : 'Listen members can add any mix here.') : 'Nothing here yet.'}</p>`}
     <div class="endpad"></div></div>`;
@@ -679,7 +687,7 @@ function catPage(cid){
     <div class="mp-head g" id="mphead"><div class="hbg"></div><button data-act="back" aria-label="Back">${ic('back')}</button><div class="htitle">${c.name}</div><span></span></div>
     <div class="mp-body g"><h1 class="mp-t" style="font-size:32px;margin-top:2px">${c.name}</h1>
       <div class="mp-meta">${list.length} mixes · DJ 651</div>
-      <div class="cgrid">${list.map(m => `<div class="ct" data-act="open" data-id="${m.id}"><img src="${cover(m.id)}" alt="" loading="lazy"><div class="tt">${m.t}</div><div class="ts">${m.genre} ${badge(m)}</div></div>`).join('')}</div>
+      <div class="cgrid">${list.map(m => `<div class="ct" data-act="open" data-id="${m.id}">${cv(m.id)}<div class="tt">${m.t}</div><div class="ts">${m.genre} ${badge(m)}</div></div>`).join('')}</div>
       <div class="endpad"></div></div></div>`;
 }
 function cartPage(){
