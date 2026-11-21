@@ -206,8 +206,15 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-o
 .card h3{margin:0 0 10px;font-size:16px;font-weight:800;display:flex;justify-content:space-between;gap:10px}
 .card h3 small{font-weight:500;color:rgba(255,255,255,.7);font-size:12.5px}
 .card.plain{background:var(--elev)}
-.tl{list-style:none;margin:0;padding:0;max-height:330px;overflow-y:auto}
-.tl li{display:grid;grid-template-columns:22px minmax(0,1fr) auto;gap:10px;padding:6px 0;font-size:14px;align-items:baseline;color:rgba(255,255,255,.62);cursor:pointer}
+.qlist{position:relative;margin-top:26px}
+.qlist h3{margin:0 0 8px;font-size:16px;font-weight:800;display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.qlist h3 small{font-weight:500;color:rgba(255,255,255,.7);font-size:12.5px;white-space:nowrap}
+.tl{list-style:none;margin:0;padding:0}
+.tl li{display:grid;grid-template-columns:24px minmax(0,1fr) auto;gap:12px;padding:8px 0;font-size:14px;align-items:center;color:rgba(255,255,255,.62);cursor:pointer}
+.tl .ti b{display:block;font-size:15.5px;font-weight:500;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tl .ti small{display:block;font-size:13px;color:rgba(255,255,255,.65);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tl li.done .ti b{color:rgba(255,255,255,.5)}
+.tl li.cur .ti b{color:var(--gold);font-weight:700}
 .tl .ti{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tl .tm{font-size:12px}
 .tl li.done{color:rgba(255,255,255,.45)}
@@ -607,9 +614,12 @@ function fullPlayer(){
     <div class="fp-low"><button class="dev ${S.device!=='phone'?'on':''}" data-act="devices">${ic('devices')}${S.device!=='phone' ? dev.name : ''}</button>
       <div class="r"><button data-act="share" aria-label="Share">${ic('share')}</button><button data-act="queue" aria-label="Queue">${ic('queue')}</button></div></div>
     ${S.preview ? `<div class="pvnote"><b>30-second preview.</b> Buy this mix for $${PRICE}, or stream every mix for $29 a month.</div>` : ''}
-    <div class="card"><h3>Tracklist <small>${tr.length ? `${tr.length} songs` : ''}</small></h3>
-      ${tr.length ? `<ol class="tl" id="tl">${tr.map((x,i) => `<li data-i="${i}" data-act="seekto"><span class="i tab">${i+1}</span><span class="ti">${x.t} · ${x.a}</span><span class="tm tab">${mmss(toSecs(m.len)*i/tr.length)}</span></li>`).join('')}</ol>`
-        : '<p style="margin:0;color:rgba(255,255,255,.7);font-size:13.5px">DJ 651 hasn’t added the tracklist for this mix yet.</p>'}</div>
+    <div class="qlist">
+      ${tr.length ? `<h3>Next from: ${m.t} <small>${tr.length} songs</small></h3>
+        <ol class="tl" id="tl">${tr.map((x,i) => `<li data-i="${i}" data-act="seekto"><span class="i tab">${i+1}</span><span class="ti"><b>${x.t}</b><small>${x.a}</small></span><span class="tm tab">${mmss(toSecs(m.len)*i/tr.length)}</span></li>`).join('')}</ol>`
+        : `<h3>Up next</h3><p style="margin:0 0 6px;color:rgba(255,255,255,.7);font-size:13.5px">DJ 651 hasn’t added the song list for this mix yet.</p>
+          ${upNext().map(x => `<div class="row" data-act="play" data-id="${x.id}"><img src="${cover(x.id)}" alt=""><div style="min-width:0"><div class="rt">${x.t}</div><div class="rs">DJ 651 ${canPlay(x.id) ? '' : '<span class="badge pv">Preview</span>'}</div></div><span></span></div>`).join('')}`}
+    </div>
     ${cta}
   </div>`;
 }
@@ -832,7 +842,17 @@ document.addEventListener('click', e => {
     case 'cart': S.stack.push({type:'cart'}); S.full = false; closeSheet(); break;
     case 'back': S.stack.pop(); break;
     case 'expand': S.full = true; break;
-    case 'collapse': S.full = false; break;
+    case 'collapse': {
+      S.full = false;
+      const t = topPage();
+      if (!t || t.type !== 'mix' || t.id !== S.now) S.stack.push({type:'mix', id:S.now});
+      render();
+      requestAnimationFrame(() => {
+        const ov = $('overlay'), cur = ov.querySelector('.trk.cur');
+        if (cur) ov.scrollTop = Math.max(0, ov.scrollTop + cur.getBoundingClientRect().top - ov.getBoundingClientRect().top - ov.clientHeight * 0.35);
+        onScroll();
+      });
+      return; }
     case 'shop': closeSheet(); S.stack = []; S.full = false; S.tab = 'home'; S.homeFilter = 'new'; render(); $('screen').scrollTop = 0; return;
     case 'play':
       if (id === S.now && S.last === id && !S.playing && S.progress < 100) { S.playing = true; break; }
