@@ -426,7 +426,7 @@ function fresh(){
     owned:new Set(['90s5']), saved:new Set(), offline:new Set(), spent:19, cart:[], plays:{}, recent:[],
     streak:0, last:null, now:'90s5', progress:0, playing:false, preview:false, curTrack:-1,
     full:false, stack:[], device:'phone', shuffle:false, repeat:false,
-    fired:{}, repeatFired:new Set(), offerB2B:false, released:false};
+    fired:{}, repeatFired:new Set(), offerB2B:false, released:false, billing:'ok', lapsed:false};
 }
 let S = fresh();
 
@@ -455,6 +455,12 @@ const dur = () => S.preview ? PREVIEW : toSecs(byId[S.now].len);
 const tracks = id => (TRACKS[id] || []).map(x => { const [a,t] = x.split('|'); return t ? {a, t} : {a:'DJ 651', t:a}; });
 const trackAt = (id, pct) => { const n = tracks(id).length; return n ? Math.min(n-1, Math.floor(pct/100*n)) : -1; };
 const topPage = () => S.stack[S.stack.length - 1];
+/* Missed payment: Listen keeps working for a 14-day grace period while the card is retried */
+const GRACE_DAYS = 14;
+const graceEnds = () => { const d = new Date(); d.setDate(d.getDate() + GRACE_DAYS); return `${d.getDate()} ${MON[d.getMonth()]}`; };
+const payBanner = () => S.billing === 'failed'
+  ? `<div class="banner hot"><div><b>Your Listen payment didn't go through</b><span>Update your card by ${graceEnds()} to keep streaming. We'll keep trying your card until then.</span></div><button class="btn hot" data-act="updatecard" style="align-self:flex-start">Update card</button></div>`
+  : S.lapsed ? `<div class="banner"><div><b>Listen has ended</b><span>Your bought mixes still play. Come back to stream everything again.</span></div><button class="btn gold" data-act="winback" style="align-self:flex-start">Come back for $15</button></div>` : '';
 /* Going from one mix to another swaps the page instead of stacking it, so Back returns to where you started */
 const openMix = id => { const t = topPage(); if (t && t.type === 'mix') S.stack[S.stack.length - 1] = {type:'mix', id}; else S.stack.push({type:'mix', id}); };
 
@@ -567,7 +573,7 @@ function home(){
   const pool = vis().filter(m => f === 'all' ? true : f === 'owned' ? inLib(m.id) : !owns(m.id));
   const quick = [...new Set([...S.recent, ...[...S.owned], ...vis().map(m => m.id)])].map(id => byId[id]).filter(m => pool.includes(m)).slice(0, 8);
   const hero = pool[0];
-  let banners = '';
+  let banners = payBanner();
   if (!nudgeHidden && needsInstall()) banners += `<div class="banner" style="flex-direction:row;align-items:center;gap:12px"><div class="iapp" style="width:44px;height:44px;border-radius:10px;font-size:15px;margin:0;flex:none">651</div><div style="flex:1;min-width:0"><b>Get the app</b><span>Add Six.5.One to your home screen.</span></div><button class="pill" data-act="install">How</button><button class="more" data-act="installhide" aria-label="Hide">${ic('x')}</button></div>`;
   if (S.offerB2B) banners += `<div class="banner hot"><div><b>Tonight only: any 3 mixes for $${member()?30:45}</b><span>Add 3 mixes to your cart and the price drops.</span></div></div>`;
   if (S.fired.spend && !member()) banners += `<div class="banner"><div><b>You've spent $${S.spent} on mixes</b><span>Stream all ${vis().length} for $29 a month, and buy any mix for $12.</span></div><button class="btn gold" data-act="plan" data-plan="listen" style="align-self:flex-start">Start Listen</button></div>`;
@@ -622,7 +628,7 @@ function library(){
   if (S.libSort === 'az') list.sort((a, b) => a.t.localeCompare(b.t));
   else if (S.libSort === 'date') list.sort((a, b) => b.d.localeCompare(a.d));
   else list.sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
-  const sub = m => `${owns(m.id) || S.offline.has(m.id) ? ic('arrow') : ''}Mixtape · DJ 651${!owns(m.id) && !member() ? ' · <span style="color:var(--hib)">locked</span>' : ''}`;
+  const sub = m => `${owns(m.id) || (S.offline.has(m.id) && member()) ? ic('arrow') : ''}Mixtape · DJ 651${!owns(m.id) && !member() ? ' · <span style="color:var(--hib)">locked</span>' : ''}`;
   return `<div class="g">
     <div class="stick" style="padding-bottom:8px"><div class="hd">${avatarBtn()}<div class="h-title">Your Library</div>${cartIcon()}</div>
     <div class="chips">${[['all','All'],['owned','Bought'],['added','Added'],['offline','Downloaded']].map(([k,l]) => `<button class="chip ${f===k?'on':''}" data-act="lfilter" data-f="${k}">${l}</button>`).join('')}</div></div>
@@ -645,6 +651,7 @@ function plans(){
   return `<div class="g">
     <div class="hd"><div class="avatar">F</div><div class="h-title">Plans</div>${cartIcon()}</div>
     <p style="margin:0;color:var(--muted)">fan@example.com</p>
+    ${payBanner()}
     ${card('listen', 'Listen', '$29<small>/mth</small>', ['Stream every mix on the shelf', 'Add mixes to your library and download them in the app', `Buy any mix to keep for $${MEMBER_PRICE}`, 'New mixes the day they drop'])}
     ${card('none', 'Pay per mix', `$${PRICE}<small> a mix</small>`, ['Buy the mixes you want', 'Keep and download the MP3s forever', '30-second previews of everything else'])}
     <div class="sec"><h2 style="font-size:18px">Notifications</h2></div>
@@ -659,6 +666,7 @@ function plans(){
     <p style="margin:0 0 10px;color:var(--muted);font-size:13.5px">See what DJ 651's app does behind the scenes.</p>
     <div style="display:flex;flex-wrap:wrap;gap:8px">
       <button class="btn" data-act="drop" ${S.released?'disabled':''}>Release a new mix</button>
+      ${S.billing === 'failed' ? `<button class="btn" data-act="graceend">Skip to day 14, card not fixed</button>` : `<button class="btn" data-act="payfail">Miss a payment</button>`}
       <button class="btn" data-act="quiet">Skip ahead 14 days</button>
       <button class="btn ghost" data-act="reset">Start again</button>
     </div>
@@ -1137,11 +1145,45 @@ document.addEventListener('click', e => {
     case 'download': closeSheet(); toast('Downloading MP3', `${byId[id].t}. Demo only.`); return;
     case 'plan': {
       const p = b.dataset.plan; if (p === S.plan) break;
+      S.billing = 'ok'; S.lapsed = false;
       closeSheet(); S.plan = p;
       if (canPlay(S.now)) S.preview = false;
       else if (!S.preview) { S.preview = true; S.playing = false; S.progress = 0; }
       toast(p === 'none' ? 'Listen cancelled' : 'Welcome to Listen', p === 'none' ? 'You keep every mix you bought.' : 'Every mix is unlocked. Demo only, nothing charged.'); break; }
     case 'closesheet': closeSheet(); return;
+    case 'payfail': {
+      const started = !member();
+      if (started) { S.plan = 'listen'; S.preview = false; }
+      S.billing = 'failed';
+      text(`Your Listen payment didn't go through. Update your card by ${graceEnds()} to keep streaming.`, 400);
+      notify('Mail · DJ 651', 'Your payment didn\'t go through', `Nothing changes yet. Update your card in the next ${GRACE_DAYS} days and you keep every mix.`, 2600);
+      toast(started ? 'Listen started, then the next payment failed' : 'Payment failed', `Listen keeps working for ${GRACE_DAYS} days while the card is retried.`);
+      S.tab = 'home'; S.stack = []; render(); $('screen').scrollTop = 0; return; }
+    case 'updatecard':
+      openSheet(`<h2>Update your card</h2><p>Your card ending 4242 was declined. Add a new one and Listen carries on.</p>
+        <div class="item"><span class="iapp" style="width:52px;height:52px;font-size:15px;margin:0">651</span><div style="min-width:0"><b>Listen</b><div style="color:var(--muted);font-size:13px">$29 a month · next charge today</div></div><b class="tab">$29</b></div>
+        <button class="btn gold wide" data-act="cardfixed">Pay $29 with a new card</button>
+        <p style="text-align:center;font-size:12.5px">Apple Pay, Google Pay or card. Demo only, nothing is charged.</p>
+        <button class="btn ghost wide" data-act="closesheet">Not now</button>`); return;
+    case 'cardfixed': closeSheet(); S.billing = 'ok'; toast('Card updated', 'Listen carries on. Thanks!'); break;
+    case 'graceend': {
+      text(`Reminder: your Listen payment still hasn't gone through. Update your card to keep streaming.`, 300);
+      toast('Day 7', 'A reminder goes out. Still no new card.');
+      setTimeout(() => {
+        if (S.billing !== 'failed') return;
+        S.billing = 'ok'; S.lapsed = true; S.plan = 'none';
+        if (!canPlay(S.now)) { S.preview = true; S.playing = false; S.progress = 0; }
+        notify('Six.5.One', 'Listen has ended', 'Your bought mixes still play and download. Everything else is back to 30-second previews.', 0);
+        toast('Day 14', 'Listen ended. Bought mixes still play; downloads from Listen are locked.');
+        render();
+        setTimeout(() => { if (S.lapsed && $('sheet').hidden) offer('Welcome back offer', 'Come back to Listen for $15', 'Your first month back is $15 instead of $29. Everything in your Library unlocks again straight away.',
+          [{act:'winback', label:'Come back for $15'}, {act:'closesheet', label:'Not now'}]); }, 4500);
+      }, 2600);
+      return; }
+    case 'winback':
+      closeSheet(); S.plan = 'listen'; S.lapsed = false; S.billing = 'ok';
+      if (canPlay(S.now)) S.preview = false;
+      toast('Welcome back to Listen', 'First month $15. Your Library is unlocked. Demo only, nothing charged.'); break;
     case 'install': installSheet(); return;
     case 'installnow':
       if (installEvt) { const ev = installEvt; installEvt = null; ev.prompt(); ev.userChoice.then(c => { if (c.outcome === 'accepted') markInstalled(); }); }
