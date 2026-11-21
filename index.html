@@ -821,7 +821,7 @@ document.addEventListener('click', e => {
   const a = b.dataset.act, id = b.dataset.id;
   switch (a){
     case 'noop': return;
-    case 'signin': S.signedIn = true; S.full = true; break;
+    case 'signin': S.signedIn = true; S.full = false; S.tab = 'home'; break;
     case 'signout': S.signedIn = false; S.playing = false; S.stack = []; S.full = false; closeSheet(); break;
     case 'tab': S.tab = b.dataset.tab; S.stack = []; closeSheet(); render(); $('screen').scrollTop = 0; return;
     case 'hfilter': S.homeFilter = b.dataset.f; break;
