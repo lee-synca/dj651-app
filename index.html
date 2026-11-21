@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Six.5.One</title>
 <meta name="description" content="Every DJ 651 mix in one player.">
-<meta name="theme-color" content="#121016">
+<meta name="theme-color" content="#0a090c">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -16,7 +16,7 @@
 <style>
 html,body{margin:0}
 </style>
-<meta name="theme-color" content="#121016">
+<meta name="theme-color" content="#0a090c">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Figtree:wght@400;500;600;700;800&display=swap">
@@ -29,7 +29,7 @@ html,body{margin:0}
   --gold:#f5c542; --gold-ink:#1d1504; --hib:#ff5d6c; --sea:#43c9b4;
   --font:'Figtree',system-ui,-apple-system,'Segoe UI',sans-serif;
   --brand:'Archivo Black','Arial Black',Impact,sans-serif;
-  --navh:50px;
+  --navh:50px; --nb:max(4px,calc(env(safe-area-inset-bottom,0px) - 16px));
   color-scheme:dark;
 }
 *{box-sizing:border-box}
@@ -43,6 +43,9 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-o
 
 .app{position:fixed;top:0;bottom:0;left:0;right:0;width:100%;max-width:480px;margin:0 auto;background:var(--bg);overflow:hidden;overflow:clip}
 @media (min-width:520px){.app{border-left:1px solid var(--line);border-right:1px solid var(--line)}}
+/* iPhone home-screen quirk: the page stops short of the screen bottom and iOS fills the rest in plain dark.
+   The tab bar then needs no extra bottom space, and its colour matches that strip. */
+.app.short{--nb:4px}
 .app.fit{max-width:none;margin:0;border:0}
 .viewport{position:absolute;inset:0}
 .sbar{position:absolute;top:0;left:0;right:0;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:2;pointer-events:none}
@@ -55,13 +58,13 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-o
 .endpad{height:170px}
 
 /* ---------- tab bar + mini player ---------- */
-.nav{position:absolute;left:0;right:0;bottom:0;z-index:5;display:grid;grid-template-columns:repeat(4,1fr);padding:7px 0 max(4px,calc(env(safe-area-inset-bottom,0px) - 16px));background:#0a090c}
+.nav{position:absolute;left:0;right:0;bottom:0;z-index:5;display:grid;grid-template-columns:repeat(4,1fr);padding:7px 0 var(--nb);background:#0a090c}
 .nav::before{content:"";position:absolute;left:0;right:0;bottom:100%;height:96px;background:linear-gradient(to top,#0a090c,rgba(10,9,12,.85) 45%,rgba(10,9,12,0));pointer-events:none}
 .nav[hidden]{display:none}
 .nav button{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10.5px;font-weight:500;color:var(--dim)}
 .nav button.on{color:var(--fg)}
 .nav .ic{width:25px;height:25px}
-#mini{position:absolute;left:8px;right:8px;bottom:calc(var(--navh) + max(4px,calc(env(safe-area-inset-bottom,0px) - 16px)) + 4px);z-index:6}
+#mini{position:absolute;left:8px;right:8px;bottom:calc(var(--navh) + var(--nb) + 4px);z-index:6}
 #mini:empty{display:none}
 .mini{touch-action:none;position:relative;display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 8px 10px;border-radius:8px;background:var(--mc,#3a2a40);cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.45)}
 .mini img{width:40px;height:40px;border-radius:4px;object-fit:cover;display:block}
@@ -120,7 +123,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-o
 .tile,.row,.qt,.cat,.trk,.ct,.feature,.topres,.mini{transition:transform .12s ease,opacity .12s ease}
 .tile:active,.row:active,.qt:active,.cat:active,.trk:active,.ct:active,.feature:active,.topres:active{transform:scale(.97);opacity:.75}
 button:active{opacity:.7}
-#snack{position:absolute;left:8px;right:8px;bottom:calc(var(--navh) + 80px + max(4px,calc(env(safe-area-inset-bottom,0px) - 16px)));z-index:25;pointer-events:none}
+#snack{position:absolute;left:8px;right:8px;bottom:calc(var(--navh) + 80px + var(--nb));z-index:25;pointer-events:none}
 .app.full #snack{bottom:calc(24px + env(safe-area-inset-bottom,0px))}
 .snack{background:#fff;color:#121016;border-radius:8px;padding:12px 14px;font-size:14px;font-weight:700;box-shadow:0 8px 24px rgba(0,0,0,.45);animation:snk .2s ease-out}
 .snack small{display:block;font-weight:500;color:#55505a;font-size:12.5px;margin-top:1px}
@@ -1112,11 +1115,12 @@ function fitPhone(){
     app.classList.remove('fit');
     app.style.zoom = ''; app.style.width = '';
     /* Home-screen app on iPhone: with the see-through status bar, iOS makes the page shorter than the
-       screen by the status bar's height, leaving a black band at the bottom. Size the app to the full screen. */
+       screen by the status bar height and iOS paints that strip dark. Drawing past it hides the tab bar, so instead
+       mark the app "short": the tab bar drops its bottom padding and its colour matches the strip. */
     const standalone = navigator.standalone || matchMedia('(display-mode: standalone)').matches;
     const full = innerWidth < innerHeight ? Math.max(screen.width, screen.height) : Math.min(screen.width, screen.height);
-    if (standalone && full > innerHeight) { app.style.height = full + 'px'; app.style.bottom = 'auto'; }
-    else { app.style.height = ''; app.style.bottom = ''; }
+    app.style.height = '';
+    app.classList.toggle('short', !!standalone && full - innerHeight > 20);
     app.style.setProperty('--h', app.clientHeight + 'px');
   }
 }
