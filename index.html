@@ -30,7 +30,7 @@ html,body{margin:0}
   --gold:#f5c542; --gold-ink:#1d1504; --hib:#ff5d6c; --sea:#43c9b4;
   --font:'Figtree',system-ui,-apple-system,'Segoe UI',sans-serif;
   --brand:'Archivo Black','Arial Black',Impact,sans-serif;
-  --navh:50px; --nb:max(4px,calc(env(safe-area-inset-bottom,0px) - 16px));
+  --navh:53px; --nb:max(2px,calc(env(safe-area-inset-bottom,0px) - 26px));
   color-scheme:dark;
 }
 *{box-sizing:border-box}
@@ -46,7 +46,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-o
 @media (min-width:520px){.app{border-left:1px solid var(--line);border-right:1px solid var(--line)}}
 /* iPhone home-screen quirk: the page stops short of the screen bottom and iOS fills the rest in plain dark.
    The tab bar then needs no extra bottom space, and its colour matches that strip. */
-.app.short{--nb:4px}
+.app.short{--nb:0px}
 .app.fit{max-width:none;margin:0;border:0}
 .viewport{position:absolute;inset:0}
 .sbar{position:absolute;top:0;left:0;right:0;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:2;pointer-events:none}
@@ -59,7 +59,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-o
 .endpad{height:170px}
 
 /* ---------- tab bar + mini player ---------- */
-.nav{position:absolute;left:0;right:0;bottom:0;z-index:5;display:grid;grid-template-columns:repeat(4,1fr);padding:7px 0 var(--nb);background:#0a090c}
+.nav{position:absolute;left:0;right:0;bottom:0;z-index:5;display:grid;grid-template-columns:repeat(4,1fr);padding:10px 0 var(--nb);background:#0a090c}
 .nav::before{content:"";position:absolute;left:0;right:0;bottom:100%;height:96px;background:linear-gradient(to top,#0a090c,rgba(10,9,12,.85) 45%,rgba(10,9,12,0));pointer-events:none}
 .nav[hidden]{display:none}
 .nav button{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10.5px;font-weight:500;color:var(--dim)}

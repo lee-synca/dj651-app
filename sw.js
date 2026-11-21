@@ -1,7 +1,7 @@
 /* Six.5.One offline helper.
    - The app page: always try the internet first (so updates show straight away), fall back to the saved copy offline.
    - Icons, manifest and fonts: use the saved copy, fetch and save it the first time. */
-const CACHE = 'six51-e878d16d51';
+const CACHE = 'six51-823035634c';
 const SHELL = ['./', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png'];
 
 self.addEventListener('install', e => {
