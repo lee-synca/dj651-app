@@ -455,6 +455,8 @@ const dur = () => S.preview ? PREVIEW : toSecs(byId[S.now].len);
 const tracks = id => (TRACKS[id] || []).map(x => { const [a,t] = x.split('|'); return t ? {a, t} : {a:'DJ 651', t:a}; });
 const trackAt = (id, pct) => { const n = tracks(id).length; return n ? Math.min(n-1, Math.floor(pct/100*n)) : -1; };
 const topPage = () => S.stack[S.stack.length - 1];
+/* Going from one mix to another swaps the page instead of stacking it, so Back returns to where you started */
+const openMix = id => { const t = topPage(); if (t && t.type === 'mix') S.stack[S.stack.length - 1] = {type:'mix', id}; else S.stack.push({type:'mix', id}); };
 
 const ICONS = {
   play:'<path d="M7 4.5l12.5 7.5L7 19.5z" fill="currentColor"/>',
@@ -1071,8 +1073,8 @@ document.addEventListener('click', e => {
     case 'lview': S.libGrid = !S.libGrid; break;
     case 'qfilter': S.qf = b.dataset.f; break;
     case 'follow': S.follow = !S.follow; toast(S.follow ? 'You’re following DJ 651' : 'Unfollowed DJ 651', S.follow ? 'You’ll hear about new mixes first.' : ''); break;
-    case 'open': S.stack.push({type:'mix', id}); S.full = false; closeSheet(); break;
-    case 'openfrom': S.full = false; S.stack.push({type:'mix', id}); break;
+    case 'open': openMix(id); S.full = false; closeSheet(); break;
+    case 'openfrom': S.full = false; openMix(id); break;
     case 'cat': S.stack.push({type:'cat', id}); break;
     case 'cart': S.stack.push({type:'cart'}); S.full = false; closeSheet(); break;
     case 'back': S.stack.pop(); break;
@@ -1170,7 +1172,7 @@ document.addEventListener('click', e => {
 function collapse(){
   S.full = false;
   const t = topPage();
-  if (!t || t.type !== 'mix' || t.id !== S.now) S.stack.push({type:'mix', id:S.now});
+  if (!t || t.type !== 'mix' || t.id !== S.now) openMix(S.now);
   render();
   requestAnimationFrame(() => {
     const ov = $('overlay'), cur = ov.querySelector('.trk.cur');
