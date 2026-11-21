@@ -283,6 +283,16 @@ button:active{opacity:.7}
 .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,.4)}
 .btn.wide{width:100%}
 .btn[disabled]{opacity:.55;cursor:default}
+a.btn{text-decoration:none}
+/* install guide */
+.iapp{width:64px;height:64px;border-radius:15px;background:#16101d;display:grid;place-items:center;font-family:var(--brand);color:var(--gold);font-size:22px;box-shadow:0 6px 18px rgba(0,0,0,.45);margin:4px auto 2px;border:1px solid rgba(245,197,66,.25)}
+.sheet .c{text-align:center}
+.istep{display:grid;grid-template-columns:28px minmax(0,1fr);gap:12px;align-items:center;font-size:15px;line-height:1.45;padding:2px 0}
+.istep .n{width:28px;height:28px;border-radius:50%;background:var(--gold);color:var(--gold-ink);display:grid;place-items:center;font-weight:800;font-size:14px}
+.ichip{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.13);border-radius:7px;padding:3px 8px;font-weight:700;font-size:14px;vertical-align:middle;white-space:nowrap}
+.ichip .ic{width:17px;height:17px;color:#5aa9ff}
+.ihint{text-align:center;font-size:12.5px}
+.ilink{background:var(--elev2);border-radius:8px;padding:10px 12px;font-size:13px;word-break:break-all;-webkit-user-select:all;user-select:all}
 
 /* ---------- account / cart ---------- */
 .plan{border-radius:10px;padding:16px;background:var(--elev);display:flex;flex-direction:column;gap:8px;margin-top:12px}
@@ -481,6 +491,9 @@ const ICONS = {
   grid:'<g fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="6.5" height="6.5" rx="1"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1"/></g>',
   list:'<g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r=".9" fill="currentColor"/><circle cx="4.5" cy="12" r=".9" fill="currentColor"/><circle cx="4.5" cy="18" r=".9" fill="currentColor"/></g>',
   check:'<path d="M6.5 12.5l3.5 3.5 7.5-8" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>',
+  addsq:'<g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3.5" y="3.5" width="17" height="17" rx="4"/><path d="M12 8v8M8 12h8"/></g>',
+  menu:'<path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
+  dotsv:'<g fill="currentColor"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></g>',
   x:'<path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
 };
 const ic = n => `<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${ICONS[n]}</svg>`;
@@ -540,6 +553,7 @@ function finishSplash(){
   const root = $('signin'); if (!root) return;
   root.querySelectorAll('.reel').forEach(r => { if (!r.classList.contains('set')) land(r); r.classList.add('on'); });
   root.classList.add('done');
+  maybeInstall();
 }
 
 /* ---------- home ---------- */
@@ -552,6 +566,7 @@ function home(){
   const quick = [...new Set([...S.recent, ...[...S.owned], ...vis().map(m => m.id)])].map(id => byId[id]).filter(m => pool.includes(m)).slice(0, 8);
   const hero = pool[0];
   let banners = '';
+  if (!nudgeHidden && needsInstall()) banners += `<div class="banner" style="flex-direction:row;align-items:center;gap:12px"><div class="iapp" style="width:44px;height:44px;border-radius:10px;font-size:15px;margin:0;flex:none">651</div><div style="flex:1;min-width:0"><b>Get the app</b><span>Add Six.5.One to your home screen.</span></div><button class="pill" data-act="install">How</button><button class="more" data-act="installhide" aria-label="Hide">${ic('x')}</button></div>`;
   if (S.offerB2B) banners += `<div class="banner hot"><div><b>Tonight only: any 3 mixes for $${member()?30:45}</b><span>Add 3 mixes to your cart and the price drops.</span></div></div>`;
   if (S.fired.spend && !member()) banners += `<div class="banner"><div><b>You've spent $${S.spent} on mixes</b><span>Stream all ${vis().length} for $29 a month, and buy any mix for $12.</span></div><button class="btn gold" data-act="plan" data-plan="listen" style="align-self:flex-start">Start Listen</button></div>`;
   const shelves = [['Jump back in', S.recent.map(id => byId[id]).filter(m => pool.includes(m)), null],
@@ -636,6 +651,8 @@ function plans(){
       <label class="toggle" for="t-push"><span>Push notifications<small>New mixes and offers</small></span><input id="t-push" type="checkbox" checked disabled></label>
       <label class="toggle" for="t-email"><span>Email<small>Receipts and a weekly roundup</small></span><input id="t-email" type="checkbox" checked disabled></label>
     </div>
+    <div class="sec"><h2 style="font-size:18px">Get the app</h2></div>
+    <button class="btn wide" data-act="install">${platform().standalone ? `${ic('added')} Installed on this phone` : `${ic('addsq')} Add to Home Screen`}</button>
     <div class="sec"><h2 style="font-size:18px">Demo tools</h2></div>
     <p style="margin:0 0 10px;color:var(--muted);font-size:13.5px">See what DJ 651's app does behind the scenes.</p>
     <div style="display:flex;flex-wrap:wrap;gap:8px">
@@ -859,6 +876,87 @@ function moreSheet(id){
     <button class="opt" data-act="queueadd" data-id="${id}">${ic('queue')}<span>Play next</span></button>
     <button class="opt" data-act="share" data-id="${id}">${ic('share')}<span>Share</span></button>`);
 }
+/* ---------- install guide ----------
+   Works out where the fan is and shows the exact steps: iPhone Safari, iPhone Chrome/Firefox/Edge,
+   inside Instagram/Facebook/TikTok/Snapchat (which can't install), Android Chrome (one-tap button),
+   Samsung Internet, or a computer. Nothing shows once it's installed. */
+let installEvt = null, installAsked = false, nudgeHidden = false;
+function platform(){
+  const UA = navigator.userAgent;
+  const ios = /iPhone|iPad|iPod/.test(UA) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const android = /Android/.test(UA);
+  const standalone = !!(navigator.standalone || matchMedia('(display-mode: standalone)').matches);
+  let inApp = /Instagram/.test(UA) ? 'Instagram' : /FBAN|FBAV|FB_IAB|FBIOS|MessengerForiOS/.test(UA) ? 'Facebook'
+    : /musical_ly|BytedanceWebview|TikTok/i.test(UA) ? 'TikTok' : /Snapchat/.test(UA) ? 'Snapchat' : /LinkedInApp/.test(UA) ? 'LinkedIn' : '';
+  if (!inApp && ((android && /; wv\)/.test(UA)) || (ios && !/Safari\//.test(UA)))) inApp = 'this app';
+  const browser = ios ? (/CriOS/.test(UA) ? 'Chrome' : /FxiOS/.test(UA) ? 'Firefox' : /EdgiOS/.test(UA) ? 'Edge' : 'Safari')
+    : android ? (/SamsungBrowser/.test(UA) ? 'Samsung' : /Firefox/.test(UA) ? 'Firefox' : 'Chrome') : 'desktop';
+  const framed = (() => { try { return window.self !== window.top; } catch (e) { return true; } })();
+  return {ios, android, standalone, inApp, browser, framed, mobile: ios || android};
+}
+const installSaid = () => { try { return localStorage.getItem('six51-installed') === '1'; } catch (e) { return false; } };
+const markInstalled = () => { try { localStorage.setItem('six51-installed', '1'); } catch (e) {} };
+const needsInstall = () => { const P = platform(); return P.mobile && !P.standalone && !P.framed && (P.inApp || !installSaid()); };
+function installSheet(){
+  const P = platform(), url = location.href.split('#')[0];
+  if (P.standalone) { openSheet(`<div class="iapp">651</div><h2 class="c">You're all set</h2><p class="c">You're using the installed app. Open it any time from your Home Screen.</p><button class="btn ghost wide" data-act="closesheet">Done</button>`); return; }
+  const step = (n, html) => `<div class="istep"><span class="n">${n}</span><div>${html}</div></div>`;
+  const chip = (icon, label) => `<span class="ichip">${ic(icon)}${label || ''}</span>`;
+  let title, intro, steps = '', actions = '';
+  if (P.inApp) {
+    const target = P.ios ? 'Safari' : 'Chrome';
+    title = `Open in ${target} to install`;
+    intro = `You're inside ${P.inApp}, and apps can't be installed from in here. Open this page in ${target} first.`;
+    steps = step(1, `Tap ${chip(P.ios ? 'dots' : 'dotsv')} in the top or bottom corner of the screen`)
+      + step(2, `Tap <b>Open in ${P.ios ? 'external browser' : 'Chrome'}</b> (it might say <b>Open in browser</b>${P.ios ? ' or <b>Open in Safari</b>' : ''})`)
+      + step(3, `${target} opens and shows you the last step`);
+    if (P.android) actions += `<a class="btn gold wide" href="intent://${location.host}${location.pathname}#Intent;scheme=https;package=com.android.chrome;end">Open in Chrome</a>`;
+    actions += `<button class="btn ${P.android ? 'ghost' : 'gold'} wide" data-act="copylink">Copy link</button><p class="ihint">Can't find it? Copy the link, open ${target} and paste it in.</p>`;
+  } else if (P.ios) {
+    title = 'Add Six.5.One to your Home Screen';
+    intro = 'It works like an app: full screen, one tap to open, and it works offline. Takes 10 seconds.';
+    steps = P.browser === 'Safari'
+      ? step(1, `Tap ${chip('share', 'Share')} in Safari's bar. Can't see it? Tap ${chip('dots')} first.`)
+        + step(2, `Scroll down and tap ${chip('addsq', 'Add to Home Screen')}`)
+        + step(3, `Leave <b>Open as Web App</b> on, then tap <b>Add</b>`)
+      : step(1, `Tap ${chip('share', 'Share')} ${P.browser === 'Chrome' ? 'at the top right, next to the address bar' : `in ${P.browser}'s menu`}`)
+        + step(2, `Tap ${chip('addsq', 'Add to Home Screen')}`)
+        + step(3, 'Tap <b>Add</b>');
+    actions = `<button class="btn gold wide" data-act="installdone">I've added it</button>`;
+  } else if (P.android) {
+    title = 'Install Six.5.One';
+    intro = 'Put it on your home screen: full screen, one tap to open, and it works offline.';
+    if (installEvt) actions = `<button class="btn gold wide" data-act="installnow">${ic('arrow')} Install app</button>`;
+    else {
+      steps = P.browser === 'Samsung'
+        ? step(1, `Tap ${chip('menu')} at the bottom right`) + step(2, 'Tap <b>Add page to</b>, then <b>Home screen</b>') + step(3, 'Tap <b>Add</b>')
+        : step(1, `Tap ${chip('dotsv')} at the top right`) + step(2, 'Tap <b>Install app</b> or <b>Add to Home screen</b>') + step(3, 'Tap <b>Install</b>');
+      actions = `<button class="btn gold wide" data-act="installdone">I've done it</button>`;
+    }
+  } else {
+    title = 'Get it on your phone';
+    intro = 'Open this link on your phone to install Six.5.One.';
+    actions = `<div class="ilink">${url}</div><button class="btn gold wide" data-act="copylink">Copy link</button>`;
+  }
+  openSheet(`<div class="iapp">651</div><h2 class="c">${title}</h2><p class="c">${intro}</p>${steps}${actions}<button class="btn ghost wide" data-act="installlater">Not now</button>`);
+}
+function maybeInstall(){
+  if (installAsked || !needsInstall()) return;
+  installAsked = true;
+  setTimeout(() => { if ($('sheet').hidden) installSheet(); }, 900);
+}
+function copyLink(){
+  const url = location.href.split('#')[0];
+  const done = () => toast('Link copied', `Paste it into ${platform().ios ? 'Safari' : 'Chrome'}.`);
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(done, () => toast('Copy this link', url));
+  else toast('Copy this link', url);
+}
+addEventListener('beforeinstallprompt', e => {
+  e.preventDefault(); installEvt = e;
+  if (!$('sheet').hidden && $('sheet').querySelector('.iapp')) installSheet();
+});
+addEventListener('appinstalled', () => { installEvt = null; markInstalled(); closeSheet(); toast('Installed', 'Open Six.5.One from your home screen.'); render(); });
+
 function queueSheet(){
   openSheet(`<h2>Up next</h2>${upNext().map(x => `<div class="row" data-act="play" data-id="${x.id}"><img src="${cover(x.id)}" alt=""><div style="min-width:0"><div class="rt">${x.t}</div><div class="rs">DJ 651 ${canPlay(x.id) ? '' : '<span class="badge pv">Preview</span>'}</div></div><span></span></div>`).join('')}`);
 }
@@ -1042,6 +1140,14 @@ document.addEventListener('click', e => {
       else if (!S.preview) { S.preview = true; S.playing = false; S.progress = 0; }
       toast(p === 'none' ? 'Listen cancelled' : 'Welcome to Listen', p === 'none' ? 'You keep every mix you bought.' : 'Every mix is unlocked. Demo only, nothing charged.'); break; }
     case 'closesheet': closeSheet(); return;
+    case 'install': installSheet(); return;
+    case 'installnow':
+      if (installEvt) { const ev = installEvt; installEvt = null; ev.prompt(); ev.userChoice.then(c => { if (c.outcome === 'accepted') markInstalled(); }); }
+      closeSheet(); return;
+    case 'installdone': markInstalled(); closeSheet(); toast('Nice one', 'Open Six.5.One from your Home Screen from now on.'); break;
+    case 'installlater': closeSheet(); return;
+    case 'installhide': nudgeHidden = true; break;
+    case 'copylink': copyLink(); return;
     case 'quiet': {
       S.playing = false; S.streak = 0; S.last = null;
       const sug = suggestions().map(s => s.m.t);
