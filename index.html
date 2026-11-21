@@ -422,7 +422,7 @@ const byId = Object.fromEntries(MIXES.map(m => [m.id, m]));
 const PRICE = 19, MEMBER_PRICE = 12;
 /* Preview = the first PREVIEW_MIN minutes of a mix. In the real app the server only sends that much of the MP3,
    so changing the length is a setting, not a re-render of every mix. */
-const PREVIEW_MIN = 20, PREVIEW = PREVIEW_MIN * 60, PV = `${PREVIEW_MIN}-minute`;
+const PREVIEW_MIN = 10, PREVIEW = PREVIEW_MIN * 60, PV = `${PREVIEW_MIN}-minute`;
 
 function fresh(){
   return {signedIn:false, sms:false, tab:'home', homeFilter:'all', libFilter:'all', libSort:'recent', libGrid:false, q:'', qf:'all', follow:false, plan:'none',
