@@ -677,7 +677,7 @@ function catPage(cid){
   return `<div class="mp" style="--pc:${c.bg};--pd:${c.bg}">
     <div class="mp-bg" style="height:300px"></div>
     <div class="mp-head g" id="mphead"><div class="hbg"></div><button data-act="back" aria-label="Back">${ic('back')}</button><div class="htitle">${c.name}</div><span></span></div>
-    <div class="mp-body g"><h1 class="mp-t" style="font-size:32px;margin-top:40px">${c.name}</h1>
+    <div class="mp-body g"><h1 class="mp-t" style="font-size:32px;margin-top:2px">${c.name}</h1>
       <div class="mp-meta">${list.length} mixes · DJ 651</div>
       <div class="cgrid">${list.map(m => `<div class="ct" data-act="open" data-id="${m.id}"><img src="${cover(m.id)}" alt="" loading="lazy"><div class="tt">${m.t}</div><div class="ts">${m.genre} ${badge(m)}</div></div>`).join('')}</div>
       <div class="endpad"></div></div></div>`;
