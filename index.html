@@ -419,7 +419,10 @@ const DEVICES = [
   {id:'car', name:'Car stereo', sub:'Bluetooth', icon:'car'},
 ];
 const byId = Object.fromEntries(MIXES.map(m => [m.id, m]));
-const PRICE = 19, MEMBER_PRICE = 12, PREVIEW = 30;
+const PRICE = 19, MEMBER_PRICE = 12;
+/* Preview = the first PREVIEW_MIN minutes of a mix. In the real app the server only sends that much of the MP3,
+   so changing the length is a setting, not a re-render of every mix. */
+const PREVIEW_MIN = 20, PREVIEW = PREVIEW_MIN * 60, PV = `${PREVIEW_MIN}-minute`;
 
 function fresh(){
   return {signedIn:false, sms:false, tab:'home', homeFilter:'all', libFilter:'all', libSort:'recent', libGrid:false, q:'', qf:'all', follow:false, plan:'none',
@@ -451,7 +454,7 @@ const fmtLong = s => { const [y,m,d] = s.split('-'); return `${+d} ${MONL[m-1]} 
 const toSecs = len => { const [m,s] = len.split(':').map(Number); return m*60+s; };
 const mmss = s => `${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;
 const hrs = len => { const m = Math.round(toSecs(len)/60); return m >= 60 ? `${Math.floor(m/60)} hr ${m%60} min` : `${m} min`; };
-const dur = () => S.preview ? PREVIEW : toSecs(byId[S.now].len);
+const dur = () => S.preview ? Math.min(PREVIEW, toSecs(byId[S.now].len)) : toSecs(byId[S.now].len);
 const tracks = id => (TRACKS[id] || []).map(x => { const [a,t] = x.split('|'); return t ? {a, t} : {a:'DJ 651', t:a}; });
 const trackAt = (id, pct) => { const n = tracks(id).length; return n ? Math.min(n-1, Math.floor(pct/100*n)) : -1; };
 const topPage = () => S.stack[S.stack.length - 1];
@@ -653,7 +656,7 @@ function plans(){
     <p style="margin:0;color:var(--muted)">fan@example.com</p>
     ${payBanner()}
     ${card('listen', 'Listen', '$29<small>/mth</small>', ['Stream every mix on the shelf', 'Add mixes to your library and download them in the app', `Buy any mix to keep for $${MEMBER_PRICE}`, 'New mixes the day they drop'])}
-    ${card('none', 'Pay per mix', `$${PRICE}<small> a mix</small>`, ['Buy the mixes you want', 'Keep and download the MP3s forever', '30-second previews of everything else'])}
+    ${card('none', 'Pay per mix', `$${PRICE}<small> a mix</small>`, ['Buy the mixes you want', 'Keep and download the MP3s forever', `${PV} previews of everything else`])}
     <div class="sec"><h2 style="font-size:18px">Notifications</h2></div>
     <div class="list-card">
       <label class="toggle" for="t-sms"><span>Text messages<small>Offers and new mix alerts</small></span><input id="t-sms" type="checkbox" data-pref="sms" ${S.sms?'checked':''}></label>
@@ -699,7 +702,7 @@ function mixPage(id){
       <div class="acts" id="acts">${leftActs}<button class="a" data-act="mixmore" data-id="${id}" aria-label="More options">${ic('dots')}</button><span class="sp"></span>
         <button class="a ${S.shuffle?'on':''}" data-act="shuffle" aria-label="Shuffle">${ic('shuffle')}</button>
         <button class="play" data-act="${cur && S.playing ? 'toggle' : 'play'}" data-id="${id}" aria-label="Play">${ic(cur && S.playing ? 'pause' : 'play')}</button></div>
-      ${!canPlay(id) ? `<p class="note">You'll hear 30-second previews. Buy it to keep and download, or stream everything with Listen.</p>` : ''}
+      ${!canPlay(id) ? `<p class="note">You'll hear the first ${PREVIEW_MIN} minutes. Buy it to keep and download, or stream everything with Listen.</p>` : ''}
       ${rows}
       <div class="foot">${tr.length ? `${tr.length} songs · ` : ''}${hrs(m.len)}<small>${fmtLong(m.d)}</small></div>
       <div class="sec"><h2>More by DJ 651</h2><button data-act="cat" data-id="all">Show all</button></div>
@@ -765,7 +768,7 @@ function fullPlayer(){
     </div>
     <div class="fp-low"><button class="dev ${S.device!=='phone'?'on':''}" data-act="devices">${ic('devices')}${S.device!=='phone' ? dev.name : ''}</button>
       <div class="r"><button data-act="share" aria-label="Share">${ic('share')}</button><button data-act="queue" aria-label="Queue">${ic('queue')}</button></div></div>
-    ${S.preview ? `<div class="pvnote"><b>30-second preview.</b> Buy this mix for $${PRICE}, or stream every mix for $29 a month.</div>` : ''}
+    ${S.preview ? `<div class="pvnote"><b>${PV} preview.</b> Buy this mix for $${PRICE}, or stream every mix for $29 a month.</div>` : ''}
     ${cta}
     <div class="about"><div class="ab-img" style="background-image:url(${cover('hello1')})"><span>About the artist</span></div>
       <div class="ab-b"><b>DJ 651</b><div class="ab-row"><span>${vis().length} mixes on Six.5.One</span><button class="pill ${S.follow ? 'line' : ''}" data-act="follow">${S.follow ? 'Following' : 'Follow'}</button></div>
@@ -822,7 +825,7 @@ function updateProgress(){
   if (seek) { if (document.activeElement !== seek) seek.value = Math.round(S.progress*10); seek.style.setProperty('--p', S.progress + '%'); }
   if ($('tel')) $('tel').textContent = mmss(el);
   if ($('mbar')) $('mbar').style.width = S.progress + '%';
-  const pct = S.preview ? (PREVIEW / toSecs(byId[S.now].len)) * S.progress : S.progress;
+  const pct = S.preview ? (dur() / toSecs(byId[S.now].len)) * S.progress : S.progress;
   const ti = trackAt(S.now, pct), tr = tracks(S.now);
   if ($('fpnow')) $('fpnow').textContent = ti >= 0 ? `${tr[ti].t} · ${tr[ti].a}` : 'DJ 651';
   if ($('msub') && ti >= 0) $('msub').textContent = `${S.preview ? 'Preview · ' : ''}${tr[ti].t} · ${tr[ti].a}`;
@@ -1009,7 +1012,7 @@ function updateMeta(){
 function updatePosition(force){
   if (!MS || !MS.setPositionState || !S.signedIn || !S.now) return;
   const now = Date.now(); if (!force && now - posAt < 2000) return; posAt = now;
-  const d = dur(), rate = (S.preview ? 0.25 : 0.0375) * d;   // the demo plays fast: this keeps the lock-screen bar in step
+  const d = dur(), rate = 0.0375 * toSecs(byId[S.now].len);   // the demo plays fast: this keeps the lock-screen bar in step
   try { MS.setPositionState({duration: d, position: Math.min(d, d * S.progress / 100), playbackRate: Math.max(0.1, rate)}); } catch (e) {}
 }
 function syncAudio(){
@@ -1030,7 +1033,7 @@ if (MS) {
   h('pause', () => { if (S.playing) { S.playing = false; render(); } });
   h('nexttrack', () => skip(1));
   h('previoustrack', () => { if (S.progress > 8) { S.progress = 0; updateProgress(); updatePosition(true); } else skip(-1); });
-  h('seekto', d => { if (S.preview) return; S.progress = Math.max(0, Math.min(99.9, d.seekTime / dur() * 100)); S.curTrack = -2; updateProgress(); updatePosition(true); });
+  h('seekto', d => { S.progress = Math.max(0, Math.min(99.9, d.seekTime / dur() * 100)); S.curTrack = -2; updateProgress(); updatePosition(true); });
 }
 
 /* ---------- playback ---------- */
@@ -1046,7 +1049,11 @@ function play(id, opts = {}){
   if (!S.last) S.streak = 1; else if (S.last !== id) S.streak++;
   if (playNext === id) playNext = null;
   S.last = id; S.now = id; S.playing = true; S.preview = !can;
-  if (!opts.keep || S.progress >= 100) S.progress = opts.at && can ? opts.at : 0;
+  if (!opts.keep || S.progress >= 100) {
+    S.progress = 0;
+    if (opts.at && can) S.progress = opts.at;
+    else if (opts.at) { const sec = opts.at / 100 * toSecs(byId[id].len); if (sec < dur()) S.progress = sec / dur() * 100; }
+  }
   S.plays[id] = (S.plays[id] || 0) + 1;
   S.recent = [id, ...S.recent.filter(x => x !== id)].slice(0, 6);
   clearInterval(timer); timer = setInterval(tick, 120);
@@ -1056,7 +1063,7 @@ function play(id, opts = {}){
 }
 function tick(){
   if (!S.playing || !S.now) return;
-  S.progress = Math.min(100, S.progress + (S.preview ? 3 : 0.45));
+  S.progress = Math.min(100, S.progress + (S.preview ? 0.45 * toSecs(byId[S.now].len) / dur() : 0.45));
   updateProgress();
   if (S.progress >= 100) ended();
 }
@@ -1235,7 +1242,7 @@ document.addEventListener('click', e => {
         if (S.billing !== 'failed') return;
         S.billing = 'ok'; S.lapsed = true; S.plan = 'none';
         if (!canPlay(S.now)) { S.preview = true; S.playing = false; S.progress = 0; }
-        notify('Six.5.One', 'Listen has ended', 'Your bought mixes still play and download. Everything else is back to 30-second previews.', 0);
+        notify('Six.5.One', 'Listen has ended', `Your bought mixes still play and download. Everything else is back to ${PV} previews.`, 0);
         toast('Day 14', 'Listen ended. Bought mixes still play; downloads from Listen are locked.');
         render();
         setTimeout(() => { if (S.lapsed && $('sheet').hidden) offer('Welcome back offer', 'Come back to Listen for $15', 'Your first month back is $15 instead of $29. Everything in your Library unlocks again straight away.',
